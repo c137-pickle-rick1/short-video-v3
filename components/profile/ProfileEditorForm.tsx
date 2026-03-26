@@ -2,30 +2,58 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface Props {
   name: string | null;
   bio: string | null;
   username: string | null;
+  email: string | null;
+  avatarUrl: string | null;
 }
 
-export default function ProfileEditorForm({ name, bio, username }: Props) {
+export default function ProfileEditorForm({ name, bio, username, email, avatarUrl }: Props) {
   const [displayName, setDisplayName] = useState(name ?? "");
   const [bioText, setBioText] = useState(bio ?? "");
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(avatarUrl);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+
+  const onAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] ?? null;
+    if (!file) return;
+
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+    if (!allowedTypes.includes(file.type)) {
+      setError("头像仅支持 JPG/PNG/WEBP");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setError("头像不能超过 5MB");
+      return;
+    }
+
+    setError(null);
+    setAvatarFile(file);
+    setAvatarPreview(URL.createObjectURL(file));
+  };
 
   const save = async () => {
     setSaving(true);
     setMessage(null);
     setError(null);
     try {
+      const formData = new FormData();
+      formData.append("name", displayName.trim());
+      formData.append("bio", bioText.trim());
+      if (avatarFile) formData.append("avatar", avatarFile);
+
       const res = await fetch("/api/profile", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: displayName.trim(), bio: bioText.trim() }),
+        body: formData,
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
@@ -40,7 +68,28 @@ export default function ProfileEditorForm({ name, bio, username }: Props) {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "14px", maxWidth: "480px" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "14px", width: "100%" }}>
+      <div>
+        <label style={{ display: "block", fontSize: "0.8125rem", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "6px" }}>
+          头像
+        </label>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <div style={{ width: "56px", height: "56px", minWidth: "56px", minHeight: "56px", flexShrink: 0, borderRadius: "50%", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg-secondary)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            {avatarPreview ? (
+              <Image src={avatarPreview} alt="头像预览" width={56} height={56} style={{ width: "100%", height: "100%", objectFit: "cover" }} unoptimized />
+            ) : (
+              <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>无头像</span>
+            )}
+          </div>
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={onAvatarChange}
+            style={{ fontSize: "0.8125rem", color: "var(--text-secondary)" }}
+          />
+        </div>
+      </div>
+
       <div>
         <label style={{ display: "block", fontSize: "0.8125rem", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "6px" }}>
           用户名
@@ -55,7 +104,22 @@ export default function ProfileEditorForm({ name, bio, username }: Props) {
             fontSize: "0.875rem", cursor: "not-allowed", boxSizing: "border-box",
           }}
         />
-        <p style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "4px" }}>用户名暂不支持修改</p>
+      </div>
+
+      <div>
+        <label style={{ display: "block", fontSize: "0.8125rem", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "6px" }}>
+          邮箱
+        </label>
+        <input
+          type="email"
+          value={email ?? ""}
+          disabled
+          style={{
+            width: "100%", background: "var(--bg-secondary)", border: "1px solid var(--border)",
+            borderRadius: "8px", padding: "9px 12px", color: "var(--text-muted)",
+            fontSize: "0.875rem", cursor: "not-allowed", boxSizing: "border-box",
+          }}
+        />
       </div>
 
       <div>
