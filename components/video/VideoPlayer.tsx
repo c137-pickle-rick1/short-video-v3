@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useMemo, useState } from "react";
 import type { VideoDetail } from "@/lib/types";
 
 interface Props {
@@ -13,19 +12,8 @@ export default function VideoPlayer({ video }: Props) {
   const plyrRef = useRef<import("plyr") | null>(null);
 
   const frameClass = video.media.frameClass;
-  const initialRatio = frameClass === "landscape" ? 16 / 9 : frameClass === "portrait" ? 9 / 16 : 1;
-  const [ratio, setRatio] = useState(initialRatio);
-
-  const playerRatio = useMemo(() => {
-    if (!Number.isFinite(ratio) || ratio <= 0) return "1 / 1";
-    return String(ratio);
-  }, [ratio]);
-
-  const maxWidthByRatio = useMemo(() => {
-    if (!Number.isFinite(ratio) || ratio <= 0) return "75vh";
-    if (ratio >= 1.2) return "100%";
-    return `calc(75vh * ${ratio})`;
-  }, [ratio]);
+  const playerRatio = "1 / 1";
+  const maxWidthByRatio = "100%";
 
   // Twitter CDN (twimg.com) blocks requests with a Referer header.
   // Prefer the direct MP4 URL for those; fall back to HLS for self-hosted content.
@@ -77,26 +65,9 @@ export default function VideoPlayer({ video }: Props) {
     };
   }, [frameClass]);
 
-  useEffect(() => {
-    const node = videoRef.current;
-    if (!node) return;
-
-    const updateRatioFromMetadata = () => {
-      const w = node.videoWidth;
-      const h = node.videoHeight;
-      if (w > 0 && h > 0) {
-        setRatio(w / h);
-      }
-    };
-
-    node.addEventListener("loadedmetadata", updateRatioFromMetadata);
-    return () => {
-      node.removeEventListener("loadedmetadata", updateRatioFromMetadata);
-    };
-  }, [playbackSrc]);
-
   return (
     <div
+      className="video-player-shell"
       style={{
         position: "relative",
         background: "#000",
@@ -109,15 +80,50 @@ export default function VideoPlayer({ video }: Props) {
         maxHeight: "75vh",
       }}
     >
+      {video.media.posterUrl ? (
+        <div
+          aria-hidden
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage: `url(${video.media.posterUrl})`,
+            backgroundPosition: "center",
+            backgroundSize: "cover",
+            filter: "blur(36px) saturate(1.15)",
+            transform: "scale(1.15)",
+            opacity: 0.78,
+            pointerEvents: "none",
+            zIndex: 0,
+          }}
+        />
+      ) : null}
       <video
         ref={videoRef}
         src={playbackSrc}
         poster={video.media.posterUrl || undefined}
         preload="metadata"
         playsInline
-        referrerPolicy="no-referrer"
-        style={{ width: "100%", height: "100%", objectFit: "contain" }}
+        style={{ width: "100%", height: "100%", objectFit: "contain", position: "relative", zIndex: 1, background: "transparent" }}
       />
+
+      <style jsx global>{`
+        .video-player-shell .plyr {
+          position: relative;
+          z-index: 1;
+          height: 100%;
+        }
+        .video-player-shell .plyr__video-wrapper {
+          background: transparent !important;
+          width: 100% !important;
+          height: 100% !important;
+        }
+        .video-player-shell .plyr__video-wrapper--fixed-ratio {
+          aspect-ratio: auto !important;
+        }
+        .video-player-shell .plyr__poster {
+          background-color: transparent !important;
+        }
+      `}</style>
     </div>
   );
 }
