@@ -24,14 +24,27 @@ export default function VideoCard({ video, showAuthor = true }: VideoCardProps) 
       {/* Thumbnail */}
       <div style={{ position: "relative", paddingBottom: "56.25%", background: "#111" }}>
         {video.media.posterUrl ? (
-          <Image
-            src={video.media.posterUrl}
-            alt={video.displayText}
-            fill
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-            style={{ objectFit: "cover" }}
-            unoptimized
-          />
+          <>
+            {/* Blurred background layer */}
+            <Image
+              src={video.media.posterUrl}
+              alt=""
+              fill
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+              style={{ objectFit: "cover", filter: "blur(12px)", transform: "scale(1.1)", opacity: 0.6 }}
+              unoptimized
+              aria-hidden
+            />
+            {/* Foreground image */}
+            <Image
+              src={video.media.posterUrl}
+              alt={video.displayText}
+              fill
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+              style={{ objectFit: "contain" }}
+              unoptimized
+            />
+          </>
         ) : (
           <div
             style={{

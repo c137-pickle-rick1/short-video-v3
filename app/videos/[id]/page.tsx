@@ -4,6 +4,7 @@ import VideoPlayer from "@/components/video/VideoPlayer";
 import VideoDetailReactions from "@/components/video/VideoDetailReactions";
 import CommentsList from "@/components/video/CommentsList";
 import VideoCard from "@/components/video/VideoCard";
+import RecordView from "@/components/video/RecordView";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import Image from "next/image";
@@ -123,19 +124,4 @@ export default async function VideoDetailPage({ params }: PageProps) {
   );
 }
 
-// Client component to record view on mount
-function RecordView({ videoId }: { videoId: string }) {
-  return (
-    <script
-      dangerouslySetInnerHTML={{
-        __html: `
-          (function(){
-            try {
-              fetch('/api/videos/${videoId}/history', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({})}).catch(()=>{});
-            } catch(e) {}
-          })();
-        `,
-      }}
-    />
-  );
-}
+
