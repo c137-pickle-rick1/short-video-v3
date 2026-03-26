@@ -17,7 +17,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
   try {
     const body = await request.json();
-    const following = body.following !== false;
+    const following = (body.following ?? body.follow) !== false;
     const result = await setFollow(viewerUserId, Number(userId), following);
     return NextResponse.json({ ok: true, ...result });
   } catch (err) {

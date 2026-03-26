@@ -19,7 +19,7 @@ export async function getPublicProfile(username: string, viewerUserId: number | 
   const { data: profile } = await getDb()
     .from("users")
     .select("id, name, username, bio, avatar_url")
-    .eq("username", username)
+    .ilike("username", username)
     .single();
 
   if (!profile) return null;

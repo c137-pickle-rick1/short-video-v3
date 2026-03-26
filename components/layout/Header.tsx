@@ -81,7 +81,7 @@ export default async function Header() {
         >
           <NavLink href="/">首页</NavLink>
           <NavLink href="/subscriptions">关注</NavLink>
-          <NavLink href="/rankings">排行榜</NavLink>
+          <NavLink href="/rankings">榜单</NavLink>
           <NavLink href="/categories">分类</NavLink>
           <NavLink href="/tags">标签</NavLink>
         </nav>

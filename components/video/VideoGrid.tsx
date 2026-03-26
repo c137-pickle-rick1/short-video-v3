@@ -31,8 +31,8 @@ export default function VideoGrid({ videos, showAuthor = true, emptyMessage = "æ
       }}
       className="video-grid"
     >
-      {videos.map((video) => (
-        <VideoCard key={video.videoId} video={video} showAuthor={showAuthor} />
+      {videos.map((video, index) => (
+        <VideoCard key={video.videoId} video={video} showAuthor={showAuthor} eagerPoster={index === 0} />
       ))}
 
       <style>{`

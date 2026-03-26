@@ -5,9 +5,10 @@ import type { VideoFeedItem } from "@/lib/types";
 interface VideoCardProps {
   video: VideoFeedItem;
   showAuthor?: boolean;
+  eagerPoster?: boolean;
 }
 
-export default function VideoCard({ video, showAuthor = true }: VideoCardProps) {
+export default function VideoCard({ video, showAuthor = true, eagerPoster = false }: VideoCardProps) {
   return (
     <Link
       href={video.detailUrl}
@@ -31,6 +32,7 @@ export default function VideoCard({ video, showAuthor = true }: VideoCardProps) 
               alt=""
               fill
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+              loading={eagerPoster ? "eager" : "lazy"}
               style={{ objectFit: "cover", filter: "blur(24px)", transform: "scale(1.15)", opacity: 0.6 }}
               unoptimized
               aria-hidden
@@ -41,6 +43,7 @@ export default function VideoCard({ video, showAuthor = true }: VideoCardProps) 
               alt={video.displayText}
               fill
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+              loading={eagerPoster ? "eager" : "lazy"}
               style={{ objectFit: "contain" }}
               unoptimized
             />

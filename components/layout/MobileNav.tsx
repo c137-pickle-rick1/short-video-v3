@@ -7,7 +7,7 @@ import { House, ChartBar, SquaresFour, UserList, User } from "@phosphor-icons/re
 const NAV_ITEMS = [
   { href: "/", label: "首页", Icon: House },
   { href: "/subscriptions", label: "关注", Icon: UserList },
-  { href: "/rankings", label: "排行榜", Icon: ChartBar },
+  { href: "/rankings", label: "榜单", Icon: ChartBar },
   { href: "/categories", label: "分类", Icon: SquaresFour },
   { href: "/me", label: "我的", Icon: User },
 ];

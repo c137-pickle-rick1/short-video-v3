@@ -14,14 +14,14 @@ export default async function RankingsPage() {
   let error = null;
 
   try {
-    items = await getRankingItems();
+    items = await getRankingItems(viewerUserId);
   } catch (e) {
     error = e instanceof Error ? e.message : "加载失败";
   }
 
   return (
     <div style={{ maxWidth: "900px", margin: "0 auto", padding: "1.25rem 1rem" }}>
-      <h1 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "1.25rem" }}>排行榜</h1>
+      <h1 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "1.25rem" }}>本周发布榜</h1>
 
       {error && (
         <div style={{ background: "#2d0a0a", border: "1px solid #5c1414", borderRadius: "8px", padding: "1rem", color: "#ff6b6b", fontSize: "0.875rem" }}>
@@ -50,7 +50,7 @@ export default async function RankingsPage() {
                 textAlign: "center",
                 fontSize: idx < 3 ? "1.25rem" : "1rem",
                 fontWeight: 700,
-                color: idx === 0 ? "#ffd700" : idx === 1 ? "#c0c0c0" : idx === 2 ? "#cd7f32" : "var(--text-muted)",
+                color: idx === 0 ? "#ffd700" : idx === 1 ? "#c0c0c0" : idx === 2 ? "#cd7f32" : "var(--text-secondary)",
               }}>
                 {idx < 3 ? ["🥇","🥈","🥉"][idx] : `${idx + 1}`}
               </div>
@@ -87,17 +87,14 @@ export default async function RankingsPage() {
                   <div style={{ fontWeight: 600, color: "var(--text-primary)" }}>{item.publishedCount7d}</div>
                   <div>本周</div>
                 </div>
-                <div style={{ textAlign: "center" }}>
-                  <div style={{ fontWeight: 600, color: "var(--text-primary)" }}>{item.lastPublishedAtText}</div>
-                  <div>最近更新</div>
-                </div>
               </div>
 
               {/* Follow button */}
-              {viewerUserId && viewerUserId !== item.userId && (
+              {viewerUserId && (
                 <RankFollowButton
                   targetUserId={item.userId}
-                  initialFollowing={false}
+                  initialFollowing={item.isFollowing}
+                  disabled={viewerUserId === item.userId}
                 />
               )}
             </div>

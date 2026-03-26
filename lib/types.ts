@@ -128,6 +128,7 @@ export interface RankingItem {
   profileUrl: string;
   publishedCount7d: string;
   totalVideos: string;
+  unreadCount: number;
   lastPublishedAtText: string;
   isFollowing: boolean;
 }

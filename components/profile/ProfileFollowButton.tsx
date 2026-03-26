@@ -19,7 +19,7 @@ export default function ProfileFollowButton({ targetUserId, initialFollowing }: 
       const res = await fetch(`/api/users/${targetUserId}/follow`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ follow: !following }),
+        body: JSON.stringify({ following: !following }),
       });
       if (res.status === 401) { router.push("/login"); return; }
       if (res.ok) {

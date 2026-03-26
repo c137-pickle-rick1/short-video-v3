@@ -222,6 +222,7 @@ export async function getRankingItems(viewerUserId?: number | null): Promise<Ran
     totalVideos: number;
     count7d: number;
     lastPublishedAt: string | null;
+    videoIds: number[];
   };
 
   const userMap = new Map<number, Entry>();
@@ -230,10 +231,11 @@ export async function getRankingItems(viewerUserId?: number | null): Promise<Ran
     const author = (video as unknown as { author: Entry["user"] | null }).author;
     if (!author) continue;
     if (!userMap.has(author.id)) {
-      userMap.set(author.id, { user: author, totalVideos: 0, count7d: 0, lastPublishedAt: null });
+      userMap.set(author.id, { user: author, totalVideos: 0, count7d: 0, lastPublishedAt: null, videoIds: [] });
     }
     const entry = userMap.get(author.id)!;
     entry.totalVideos++;
+    entry.videoIds.push((video as unknown as { id: number }).id);
     const publishedAt = (video as unknown as { published_at: string | null; created_at: string | null }).published_at
       ?? (video as unknown as { created_at: string | null }).created_at;
     if (publishedAt && publishedAt >= sevenDaysAgo) entry.count7d++;
@@ -258,6 +260,20 @@ export async function getRankingItems(viewerUserId?: number | null): Promise<Ran
     followedSet = new Set((followRows ?? []).map((r) => r.followed_user_id));
   }
 
+  let viewedVideoSet = new Set<number>();
+  if (viewerUserId) {
+    const targetVideoIds = ranked.flatMap((entry) => entry.videoIds);
+    if (targetVideoIds.length > 0) {
+      const { data: viewRows } = await getDb()
+        .from("video_views")
+        .select("video_id")
+        .eq("user_id", viewerUserId)
+        .in("video_id", targetVideoIds)
+        .limit(5000);
+      viewedVideoSet = new Set((viewRows ?? []).map((r) => r.video_id));
+    }
+  }
+
   return ranked.map((entry, index): RankingItem => ({
     rank: index + 1,
     userId: entry.user.id,
@@ -268,6 +284,7 @@ export async function getRankingItems(viewerUserId?: number | null): Promise<Ran
     profileUrl: getProfileUrl(entry.user.username),
     publishedCount7d: String(entry.count7d),
     totalVideos: String(entry.totalVideos),
+    unreadCount: entry.videoIds.reduce((count, id) => (viewedVideoSet.has(id) ? count : count + 1), 0),
     lastPublishedAtText: formatRelativeTime(entry.lastPublishedAt),
     isFollowing: followedSet.has(entry.user.id),
   }));
