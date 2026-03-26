@@ -2,6 +2,7 @@ import { getViewerProfile } from "@/lib/server/queries/video";
 import { getViewerFollowStats } from "@/lib/server/queries/user";
 import { resolveViewerUserIdFromCookieToken } from "@/lib/server/auth";
 import ProfileEditorForm from "@/components/profile/ProfileEditorForm";
+import LogoutButton from "@/components/profile/LogoutButton";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Image from "next/image";
@@ -78,6 +79,11 @@ export default async function MePage() {
       <div style={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: "12px", padding: "24px", marginBottom: "24px" }}>
         <h2 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: "16px" }}>修改资料</h2>
         <ProfileEditorForm name={profile.name} bio={profile.bio} username={profile.username} email={profile.email} avatarUrl={profile.avatarUrl} />
+      </div>
+
+      {/* Logout */}
+      <div style={{ marginTop: "8px", marginBottom: "32px" }}>
+        <LogoutButton />
       </div>
     </div>
   );

@@ -11,7 +11,13 @@ export default function VideoPlayer({ video }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const plyrRef = useRef<import("plyr") | null>(null);
 
-  const src = video.media.hlsUrl || video.media.videoUrl;
+  // Twitter CDN (twimg.com) blocks requests with a Referer header.
+  // Prefer the direct MP4 URL for those; fall back to HLS for self-hosted content.
+  const isTwitterUrl = (url: string) => url.includes("twimg.com");
+  const src =
+    isTwitterUrl(video.media.videoUrl || video.media.hlsUrl)
+      ? video.media.videoUrl || video.media.hlsUrl
+      : video.media.hlsUrl || video.media.videoUrl;
 
   useEffect(() => {
     let instance: import("plyr") | null = null;
@@ -68,6 +74,7 @@ export default function VideoPlayer({ video }: Props) {
         poster={video.media.posterUrl || undefined}
         preload="metadata"
         playsInline
+        referrerPolicy="no-referrer"
       />
     </div>
   );

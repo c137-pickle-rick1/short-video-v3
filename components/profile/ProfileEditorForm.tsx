@@ -165,7 +165,7 @@ export default function ProfileEditorForm({ name, bio, username, email, avatarUr
         onClick={save}
         disabled={saving}
         className="btn-primary"
-        style={{ alignSelf: "flex-start", padding: "9px 24px" }}
+        style={{ alignSelf: "flex-start", padding: "6px 16px", fontSize: "0.875rem" }}
       >
         {saving ? "保存中…" : "保存修改"}
       </button>
