@@ -73,6 +73,7 @@ export interface VideoFeedItem {
     frameClass: string;
   };
   author: {
+    userId?: number | null;
     name: string;
     imageUrl: string;
     profileUrl: string;
@@ -86,6 +87,7 @@ export interface VideoDetail extends VideoFeedItem {
   viewCount: number;
   isLiked: boolean;
   isBookmarked: boolean;
+  isFollowingAuthor?: boolean;
 }
 
 export interface CommentItem {

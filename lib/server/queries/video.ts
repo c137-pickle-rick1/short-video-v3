@@ -12,7 +12,7 @@ import {
   getVideoMediaUrls,
 } from "../presenters";
 
-type AuthorFields = { name: string | null; username: string | null; avatar_url: string | null };
+type AuthorFields = { id: number; name: string | null; username: string | null; avatar_url: string | null };
 
 export async function getVideoDetail(videoId: number, viewerUserId: number | null): Promise<VideoDetail | null> {
   const { data: row } = await getDb()
@@ -30,7 +30,9 @@ export async function getVideoDetail(videoId: number, viewerUserId: number | nul
 
   if (!row) return null;
 
-  const [likesRes, bookmarksRes, commentsRes, viewsRes, isLikedRes, isBookmarkedRes] = await Promise.all([
+  const author = (row as unknown as { author: AuthorFields | null }).author;
+
+  const [likesRes, bookmarksRes, commentsRes, viewsRes, isLikedRes, isBookmarkedRes, isFollowingAuthorRes] = await Promise.all([
     getDb().from("video_likes").select("*", { count: "exact", head: true }).eq("video_id", videoId),
     getDb().from("video_bookmarks").select("*", { count: "exact", head: true }).eq("video_id", videoId),
     getDb().from("video_comments").select("*", { count: "exact", head: true }).eq("video_id", videoId).is("deleted_at", null),
@@ -41,9 +43,10 @@ export async function getVideoDetail(videoId: number, viewerUserId: number | nul
     viewerUserId
       ? getDb().from("video_bookmarks").select("*", { count: "exact", head: true }).eq("video_id", videoId).eq("user_id", viewerUserId)
       : Promise.resolve({ count: 0 as number | null }),
+    viewerUserId && author?.id
+      ? getDb().from("user_follows").select("*", { count: "exact", head: true }).eq("follower_user_id", viewerUserId).eq("followed_user_id", author.id)
+      : Promise.resolve({ count: 0 as number | null }),
   ]);
-
-  const author = (row as unknown as { author: AuthorFields | null }).author;
   const mediaUrls = getVideoMediaUrls(row.origin, row.playback_url, row.hls_url);
 
   return {
@@ -60,6 +63,7 @@ export async function getVideoDetail(videoId: number, viewerUserId: number | nul
       frameClass: getFrameClass(row.width, row.height),
     },
     author: {
+      userId: author?.id ?? null,
       name: getDisplayName(author?.name ?? null, author?.username ?? null),
       imageUrl: normalizeAvatarUrl(author?.avatar_url ?? null, author?.name ?? null, author?.username ?? null),
       profileUrl: getProfileUrl(author?.username ?? null),
@@ -70,6 +74,7 @@ export async function getVideoDetail(videoId: number, viewerUserId: number | nul
     viewCount: viewsRes.count ?? 0,
     isLiked: (isLikedRes.count ?? 0) > 0,
     isBookmarked: (isBookmarkedRes.count ?? 0) > 0,
+    isFollowingAuthor: (isFollowingAuthorRes.count ?? 0) > 0,
   };
 }
 
