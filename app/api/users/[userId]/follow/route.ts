@@ -11,6 +11,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     return NextResponse.json({ ok: false, message: "请先登录。" }, { status: 401 });
   }
 
+  if (viewerUserId === Number(userId)) {
+    return NextResponse.json({ ok: false, message: "不能关注自己。" }, { status: 400 });
+  }
+
   try {
     const body = await request.json();
     const following = body.following !== false;

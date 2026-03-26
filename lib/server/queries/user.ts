@@ -80,8 +80,9 @@ export async function getPublicProfile(username: string, viewerUserId: number | 
   };
 }
 
-export async function getViewerBookmarks(viewerUserId: number): Promise<VideoFeedItem[]> {
-  const { data } = await getDb()
+export async function getViewerBookmarks(viewerUserId: number, page = 1, pageSize = 24): Promise<{ videos: VideoFeedItem[]; total: number }> {
+  const offset = (page - 1) * pageSize;
+  const { data, count } = await getDb()
     .from("video_bookmarks")
     .select(`
       created_at,
@@ -91,10 +92,10 @@ export async function getViewerBookmarks(viewerUserId: number): Promise<VideoFee
         width, height, published_at, created_at, status,
         author:users!uploader_user_id(name, username, avatar_url)
       )
-    `)
+    `, { count: "exact" })
     .eq("user_id", viewerUserId)
     .order("created_at", { ascending: false })
-    .limit(48);
+    .range(offset, offset + pageSize - 1);
 
   const results: VideoFeedItem[] = [];
   for (const row of data ?? []) {
@@ -121,10 +122,10 @@ export async function getViewerBookmarks(viewerUserId: number): Promise<VideoFee
       },
     });
   }
-  return results;
+  return { videos: results, total: count ?? 0 };
 }
 
-export async function getViewerHistory(viewerUserId: number): Promise<VideoFeedItem[]> {
+export async function getViewerHistory(viewerUserId: number, page = 1, pageSize = 24): Promise<{ videos: VideoFeedItem[]; total: number }> {
   const { data } = await getDb()
     .from("video_views")
     .select(`
@@ -138,7 +139,7 @@ export async function getViewerHistory(viewerUserId: number): Promise<VideoFeedI
     `)
     .eq("user_id", viewerUserId)
     .order("view_date", { ascending: false })
-    .limit(200);
+    .limit(500);
 
   type HistoryVideo = { id: number; origin: string | null; legacy_tweet_id: string | null; title: string | null; caption: string | null; description: string | null; poster_url: string | null; playback_url: string | null; hls_url: string | null; duration_text: string | null; duration_seconds: number | null; width: number | null; height: number | null; published_at: string | null; created_at: string | null; status: string; author: AuthorFields | null };
 
@@ -169,9 +170,10 @@ export async function getViewerHistory(viewerUserId: number): Promise<VideoFeedI
         profileUrl: getProfileUrl(video.author?.username ?? null),
       },
     });
-    if (results.length >= 48) break;
   }
-  return results;
+  const total = results.length;
+  const start = (page - 1) * pageSize;
+  return { videos: results.slice(start, start + pageSize), total };
 }
 
 export interface MyUploadedVideo {
@@ -198,6 +200,18 @@ export async function getMyVideos(viewerUserId: number): Promise<MyUploadedVideo
     posterUrl: r.poster_url,
     createdAt: r.created_at,
   }));
+}
+
+export async function getViewerFollowStats(viewerUserId: number): Promise<{ followingCount: number; followerCount: number }> {
+  const [followingRes, followerRes] = await Promise.all([
+    getDb().from("user_follows").select("*", { count: "exact", head: true }).eq("follower_user_id", viewerUserId),
+    getDb().from("user_follows").select("*", { count: "exact", head: true }).eq("followed_user_id", viewerUserId),
+  ]);
+
+  return {
+    followingCount: followingRes.count ?? 0,
+    followerCount: followerRes.count ?? 0,
+  };
 }
 
 export async function getTagList() {

@@ -205,7 +205,7 @@ export async function getExploreFeedItems(
   };
 }
 
-export async function getRankingItems(): Promise<RankingItem[]> {
+export async function getRankingItems(viewerUserId?: number | null): Promise<RankingItem[]> {
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
 
   const { data } = await getDb()
@@ -242,19 +242,33 @@ export async function getRankingItems(): Promise<RankingItem[]> {
     }
   }
 
-  return Array.from(userMap.values())
+  const ranked = Array.from(userMap.values())
     .sort((a, b) => b.count7d - a.count7d || b.totalVideos - a.totalVideos)
-    .slice(0, RANKING_LIMIT)
-    .map((entry, index): RankingItem => ({
-      rank: index + 1,
-      userId: entry.user.id,
-      name: getDisplayName(entry.user.name, entry.user.username),
-      username: entry.user.username ?? "",
-      handle: getHandle(entry.user.username),
-      imageUrl: normalizeAvatarUrl(entry.user.avatar_url, entry.user.name, entry.user.username),
-      profileUrl: getProfileUrl(entry.user.username),
-      publishedCount7d: String(entry.count7d),
-      totalVideos: String(entry.totalVideos),
-      lastPublishedAtText: formatRelativeTime(entry.lastPublishedAt),
-    }));
+    .slice(0, RANKING_LIMIT);
+
+  // Batch-fetch follow status for the viewer
+  let followedSet = new Set<number>();
+  if (viewerUserId) {
+    const targetIds = ranked.map((e) => e.user.id);
+    const { data: followRows } = await getDb()
+      .from("user_follows")
+      .select("followed_user_id")
+      .eq("follower_user_id", viewerUserId)
+      .in("followed_user_id", targetIds);
+    followedSet = new Set((followRows ?? []).map((r) => r.followed_user_id));
+  }
+
+  return ranked.map((entry, index): RankingItem => ({
+    rank: index + 1,
+    userId: entry.user.id,
+    name: getDisplayName(entry.user.name, entry.user.username),
+    username: entry.user.username ?? "",
+    handle: getHandle(entry.user.username),
+    imageUrl: normalizeAvatarUrl(entry.user.avatar_url, entry.user.name, entry.user.username),
+    profileUrl: getProfileUrl(entry.user.username),
+    publishedCount7d: String(entry.count7d),
+    totalVideos: String(entry.totalVideos),
+    lastPublishedAtText: formatRelativeTime(entry.lastPublishedAt),
+    isFollowing: followedSet.has(entry.user.id),
+  }));
 }

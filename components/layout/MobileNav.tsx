@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { House, ChartBar, SquaresFour, Tag, User } from "@phosphor-icons/react";
+import { House, ChartBar, SquaresFour, UserList, User } from "@phosphor-icons/react";
 
 const NAV_ITEMS = [
   { href: "/", label: "首页", Icon: House },
+  { href: "/subscriptions", label: "关注", Icon: UserList },
   { href: "/rankings", label: "排行榜", Icon: ChartBar },
   { href: "/categories", label: "分类", Icon: SquaresFour },
-  { href: "/tags", label: "标签", Icon: Tag },
   { href: "/me", label: "我的", Icon: User },
 ];
 

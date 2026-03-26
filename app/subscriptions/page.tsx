@@ -14,7 +14,7 @@ export default async function SubscriptionsPage() {
   let error = null;
 
   try {
-    creators = await getRankingItems();
+    creators = await getRankingItems(viewerUserId);
   } catch (e) {
     error = e instanceof Error ? e.message : "加载失败";
   }
@@ -31,7 +31,7 @@ export default async function SubscriptionsPage() {
       )}
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: "12px" }}>
-        {creators.map((creator) => (
+        {creators.filter((c) => c.userId !== viewerUserId).map((creator) => (
           <div
             key={creator.userId}
             style={{
@@ -66,7 +66,7 @@ export default async function SubscriptionsPage() {
               {creator.totalVideos} 个视频
             </div>
             {viewerUserId && viewerUserId !== creator.userId && (
-              <ProfileFollowButton targetUserId={creator.userId} initialFollowing={false} />
+              <ProfileFollowButton targetUserId={creator.userId} initialFollowing={creator.isFollowing} />
             )}
             {!viewerUserId && (
               <Link href="/login" className="btn-primary" style={{ display: "inline-block", padding: "6px 16px", fontSize: "0.8125rem" }}>

@@ -129,6 +129,7 @@ export interface RankingItem {
   publishedCount7d: string;
   totalVideos: string;
   lastPublishedAtText: string;
+  isFollowing: boolean;
 }
 
 export interface ViewerProfile {

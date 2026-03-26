@@ -2,25 +2,36 @@ import { getViewerHistory } from "@/lib/server/queries/user";
 import { resolveViewerUserIdFromCookieToken } from "@/lib/server/auth";
 import VideoGrid from "@/components/video/VideoGrid";
 import ClearHistoryButton from "@/components/profile/ClearHistoryButton";
+import Pagination from "@/components/layout/Pagination";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import type { VideoFeedItem } from "@/lib/types";
 
-export default async function HistoryPage() {
+const PAGE_SIZE = 24;
+
+export default async function HistoryPage({ searchParams }: { searchParams: Promise<Record<string, string>> }) {
   const jar = await cookies();
   const token = jar.get("sv_session")?.value ?? null;
   const viewerUserId = token ? await resolveViewerUserIdFromCookieToken(token) : null;
   if (!viewerUserId) redirect("/login?redirect_to=/me/history");
 
+  const sp = await searchParams;
+  const page = Math.max(1, parseInt(sp.page ?? "1", 10) || 1);
+
   let videos: VideoFeedItem[] = [];
+  let total = 0;
   let error = null;
 
   try {
-    videos = await getViewerHistory(viewerUserId);
+    const result = await getViewerHistory(viewerUserId, page, PAGE_SIZE);
+    videos = result.videos;
+    total = result.total;
   } catch (e) {
     error = e instanceof Error ? e.message : "加载失败";
   }
+
+  const totalPages = Math.ceil(total / PAGE_SIZE);
 
   return (
     <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "1.25rem 1rem" }}>
@@ -28,7 +39,7 @@ export default async function HistoryPage() {
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
           <Link href="/me" style={{ color: "var(--text-muted)", fontSize: "0.875rem" }}>个人中心</Link>
           <span style={{ color: "var(--text-muted)" }}>›</span>
-          <h1 style={{ fontSize: "1.25rem", fontWeight: 700 }}>观看历史</h1>
+          <h1 style={{ fontSize: "0.875rem", fontWeight: 600 }}>观看历史</h1>
         </div>
         {videos.length > 0 && <ClearHistoryButton />}
       </div>
@@ -40,6 +51,7 @@ export default async function HistoryPage() {
       )}
 
       <VideoGrid videos={videos} emptyMessage="暂无观看历史" />
+      {totalPages > 1 && <Pagination currentPage={page} totalPages={totalPages} basePath="/me/history" />}
     </div>
   );
 }

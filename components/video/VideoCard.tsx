@@ -22,7 +22,7 @@ export default function VideoCard({ video, showAuthor = true }: VideoCardProps) 
       className="video-card"
     >
       {/* Thumbnail */}
-      <div style={{ position: "relative", paddingBottom: "56.25%", background: "#111" }}>
+      <div style={{ position: "relative", paddingBottom: "100%", background: "#111" }}>
         {video.media.posterUrl ? (
           <>
             {/* Blurred background layer */}
@@ -31,7 +31,7 @@ export default function VideoCard({ video, showAuthor = true }: VideoCardProps) 
               alt=""
               fill
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-              style={{ objectFit: "cover", filter: "blur(12px)", transform: "scale(1.1)", opacity: 0.6 }}
+              style={{ objectFit: "cover", filter: "blur(24px)", transform: "scale(1.15)", opacity: 0.6 }}
               unoptimized
               aria-hidden
             />
@@ -114,7 +114,7 @@ export default function VideoCard({ video, showAuthor = true }: VideoCardProps) 
         <p
           className="line-clamp-2"
           style={{
-            fontSize: "0.8125rem",
+            fontSize: "0.9375rem",
             color: "var(--text-primary)",
             lineHeight: "1.4",
             marginBottom: showAuthor ? "8px" : 0,

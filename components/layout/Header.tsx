@@ -80,6 +80,7 @@ export default async function Header() {
           className="hidden-mobile"
         >
           <NavLink href="/">首页</NavLink>
+          <NavLink href="/subscriptions">关注</NavLink>
           <NavLink href="/rankings">排行榜</NavLink>
           <NavLink href="/categories">分类</NavLink>
           <NavLink href="/tags">标签</NavLink>
@@ -98,11 +99,12 @@ export default async function Header() {
             <>
               <Link
                 href="/me"
+                className="nav-link"
                 style={{
                   display: "flex",
                   alignItems: "center",
                   gap: "0.5rem",
-                  padding: "4px",
+                  padding: "4px 8px",
                   borderRadius: "6px",
                   transition: "background 0.15s",
                 }}
@@ -110,8 +112,8 @@ export default async function Header() {
                 <Image
                   src={normalizeAvatarUrl(viewerProfile.avatarUrl, viewerProfile.name, viewerProfile.username)}
                   alt={viewerProfile.name ?? "用户"}
-                  width={32}
-                  height={32}
+                  width={24}
+                  height={24}
                   style={{ borderRadius: "50%", objectFit: "cover" }}
                   unoptimized
                 />

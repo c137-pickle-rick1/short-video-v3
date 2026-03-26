@@ -9,7 +9,7 @@ export default function SearchBar({ defaultValue = "" }: { defaultValue?: string
         type="search"
         name="q"
         defaultValue={defaultValue}
-        placeholder="搜索视频、主播..."
+        placeholder="搜索视频、关键词"
         style={{
           padding: "6px 12px 6px 36px",
           fontSize: "0.875rem",
