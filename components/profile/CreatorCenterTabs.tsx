@@ -120,7 +120,7 @@ export default function CreatorCenterTabs({ initialVideos }: Props) {
             gap: "6px",
             padding: "8px 16px",
             borderRadius: "8px",
-            background: "#e5192a",
+            background: "var(--accent)",
             color: "#fff",
             border: "none",
             fontSize: "0.875rem",

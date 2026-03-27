@@ -106,6 +106,7 @@ export interface CommentItem {
   replies?: CommentItem[];
   replyToCommentId: number | null;
   parentId: number | null;
+  isOwner?: boolean;
 }
 
 export interface PublicProfile {

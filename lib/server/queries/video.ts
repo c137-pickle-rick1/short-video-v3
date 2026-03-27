@@ -86,7 +86,7 @@ export async function getVideoDetail(videoId: number, viewerUserId: number | nul
   };
 }
 
-export async function getVideoComments(videoId: number): Promise<CommentItem[]> {
+export async function getVideoComments(videoId: number, viewerUserId?: number | null): Promise<CommentItem[]> {
   const { data } = await getDb()
     .from("video_comments")
     .select(`
@@ -115,6 +115,7 @@ export async function getVideoComments(videoId: number): Promise<CommentItem[]> 
     editedAtText: row.edited_at ? formatRelativeTime(row.edited_at) : null,
     parentId: row.parent_id,
     replyToCommentId: row.reply_to_comment_id,
+    isOwner: viewerUserId != null ? row.user_id === viewerUserId : false,
     author: {
       name: getDisplayName(row.author?.name ?? null, row.author?.username ?? null),
       username: row.author?.username ?? "",

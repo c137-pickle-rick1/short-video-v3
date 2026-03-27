@@ -3,11 +3,13 @@ import { AUTH_SESSION_COOKIE_NAME, resolveViewerUserIdFromCookieToken } from "@/
 import { addComment } from "@/lib/server/mutations";
 import { getVideoComments } from "@/lib/server/queries/video";
 
-export async function GET(_request: NextRequest, { params }: { params: Promise<{ videoId: string }> }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ videoId: string }> }) {
   const { videoId } = await params;
+  const token = request.cookies.get(AUTH_SESSION_COOKIE_NAME)?.value;
+  const viewerUserId = await resolveViewerUserIdFromCookieToken(token);
 
   try {
-    const comments = await getVideoComments(Number(videoId));
+    const comments = await getVideoComments(Number(videoId), viewerUserId);
     return NextResponse.json({ ok: true, comments });
   } catch (err) {
     console.error("[comments GET]", err);

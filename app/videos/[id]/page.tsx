@@ -22,20 +22,23 @@ interface PageProps {
 async function CommentsSection({
   videoId,
   viewerLoggedIn,
+  viewerUserId,
   viewerName,
   viewerImage,
 }: {
   videoId: string;
   viewerLoggedIn: boolean;
+  viewerUserId?: number | null;
   viewerName?: string | null;
   viewerImage?: string | null;
 }) {
-  const comments = await getVideoComments(parseInt(videoId, 10));
+  const comments = await getVideoComments(parseInt(videoId, 10), viewerUserId);
   return (
     <CommentsList
       videoId={videoId}
       initialComments={comments}
       viewerLoggedIn={viewerLoggedIn}
+      viewerUserId={viewerUserId}
       viewerName={viewerName}
       viewerImage={viewerImage}
     />
@@ -193,6 +196,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
                 <CommentsSection
                   videoId={video.videoId}
                   viewerLoggedIn={viewerLoggedIn}
+                  viewerUserId={viewerUserId}
                   viewerName={viewerProfile?.name}
                   viewerImage={viewerImage}
                 />

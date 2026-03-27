@@ -230,3 +230,8 @@ input::placeholder, textarea::placeholder {
   overflow: hidden;
 }
 
+/* Reddit-style comment thread line */
+.thread-line-hitarea:hover .thread-line-visible {
+  background: var(--accent) !important;
+}
+
