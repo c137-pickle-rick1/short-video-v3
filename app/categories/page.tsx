@@ -1,34 +1,25 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getCategoryList } from "@/lib/server/queries/category";
-import type { Category } from "@/lib/types";
-
-const GROUP_LABELS: Record<string, string> = {
-  region: "地区",
-  format: "类型",
-  style: "风格",
-};
+import { getCategoryGroups } from "@/lib/server/queries/category";
+import type { Category, CategoryGroup } from "@/lib/types";
 
 export const metadata = { title: "分类" };
 
 export default async function CategoriesPage() {
-  const categories = await getCategoryList();
-
-  const groups = Object.entries(GROUP_LABELS).map(([key, label]) => ({
-    key,
-    label,
-    items: categories.filter((c) => c.groupKey === key),
-  }));
+  const groups = await getCategoryGroups();
 
   return (
     <main className="categories-page">
-      {groups.map(({ key, label, items }) =>
-        items.length === 0 ? null : (
-          <section key={key} className="category-group">
-            <h2 className="category-group-title">{label}</h2>
+      {groups.length === 0 && (
+        <p className="empty-state">暂无分类</p>
+      )}
+      {groups.map((group: CategoryGroup) =>
+        group.items.length === 0 ? null : (
+          <section key={group.id} className="category-group">
+            <h2 className="category-group-title">{group.name}</h2>
             <div className="category-grid">
-              {items.map((cat) => (
-                <CategoryCard key={cat.id} category={cat} />
+              {group.items.map((category) => (
+                <CategoryCard key={category.id} category={category} />
               ))}
             </div>
           </section>
@@ -39,6 +30,11 @@ export default async function CategoriesPage() {
           max-width: 1400px;
           margin: 0 auto;
           padding: 24px 16px 48px;
+        }
+        .empty-state {
+          color: var(--text-secondary);
+          text-align: center;
+          padding: 48px 0;
         }
         .category-group {
           margin-bottom: 40px;

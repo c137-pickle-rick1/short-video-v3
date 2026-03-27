@@ -1,11 +1,8 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let client: SupabaseClient<any> | undefined;
+let client: SupabaseClient | undefined;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function getDb(): SupabaseClient<any> {
+export function getDb(): SupabaseClient {
   const supabaseUrl = process.env.SUPABASE_URL ?? "";
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
 

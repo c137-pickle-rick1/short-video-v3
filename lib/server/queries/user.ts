@@ -213,29 +213,3 @@ export async function getViewerFollowStats(viewerUserId: number): Promise<{ foll
     followerCount: followerRes.count ?? 0,
   };
 }
-
-export async function getTagList() {
-  const { data } = await getDb()
-    .from("videos")
-    .select("uploader_user_id, author:users!uploader_user_id(id, name, username)")
-    .eq("status", "published")
-    .eq("visibility", "public");
-
-  const userMap = new Map<number, { tag_name: string; video_count: number }>();
-  for (const row of data ?? []) {
-    const author = (row as unknown as { author: { id: number; name: string | null; username: string | null } | null }).author;
-    if (!author) continue;
-    const tagName = author.name ?? author.username;
-    if (!tagName) continue;
-    if (!userMap.has(author.id)) {
-      userMap.set(author.id, { tag_name: tagName, video_count: 0 });
-    }
-    userMap.get(author.id)!.video_count++;
-  }
-
-  return Array.from(userMap.values())
-    .sort((a, b) => b.video_count - a.video_count)
-    .slice(0, 100)
-    .map((u) => ({ tag_name: u.tag_name, video_count: String(u.video_count) }));
-}
-

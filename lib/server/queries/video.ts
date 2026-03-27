@@ -32,7 +32,7 @@ export async function getVideoDetail(videoId: number, viewerUserId: number | nul
 
   const author = (row as unknown as { author: AuthorFields | null }).author;
 
-  const [likesRes, bookmarksRes, commentsRes, viewsRes, isLikedRes, isBookmarkedRes, isFollowingAuthorRes] = await Promise.all([
+  const [likesRes, bookmarksRes, commentsRes, viewsRes, isLikedRes, isBookmarkedRes, isFollowingAuthorRes, categoriesRes, tagsRes] = await Promise.all([
     getDb().from("video_likes").select("*", { count: "exact", head: true }).eq("video_id", videoId),
     getDb().from("video_bookmarks").select("*", { count: "exact", head: true }).eq("video_id", videoId),
     getDb().from("video_comments").select("*", { count: "exact", head: true }).eq("video_id", videoId).is("deleted_at", null),
@@ -46,6 +46,8 @@ export async function getVideoDetail(videoId: number, viewerUserId: number | nul
     viewerUserId && author?.id
       ? getDb().from("user_follows").select("*", { count: "exact", head: true }).eq("follower_user_id", viewerUserId).eq("followed_user_id", author.id)
       : Promise.resolve({ count: 0 as number | null }),
+    getDb().from("video_category_assignments").select("category:categories!category_id(id, slug, name)").eq("video_id", videoId),
+    getDb().from("video_tag_assignments").select("tag:tags!tag_id(id, slug, name)").eq("video_id", videoId),
   ]);
   const mediaUrls = getVideoMediaUrls(row.origin, row.playback_url, row.hls_url);
 
@@ -75,6 +77,12 @@ export async function getVideoDetail(videoId: number, viewerUserId: number | nul
     isLiked: (isLikedRes.count ?? 0) > 0,
     isBookmarked: (isBookmarkedRes.count ?? 0) > 0,
     isFollowingAuthor: (isFollowingAuthorRes.count ?? 0) > 0,
+    categories: ((categoriesRes.data ?? []) as unknown as { category: { id: number; slug: string; name: string } | null }[])
+      .map((r) => r.category)
+      .filter((c): c is { id: number; slug: string; name: string } => c !== null),
+    tags: ((tagsRes.data ?? []) as unknown as { tag: { id: number; slug: string; name: string } | null }[])
+      .map((r) => r.tag)
+      .filter((t): t is { id: number; slug: string; name: string } => t !== null),
   };
 }
 

@@ -1,19 +1,22 @@
-import { getTagList } from "@/lib/server/queries/user";
 import Link from "next/link";
+import { getTags } from "@/lib/server/queries/tag";
+import type { Tag } from "@/lib/types";
+
+export const metadata = { title: "标签" };
 
 export default async function TagsPage() {
-  let tags: { tag_name: string; video_count: string }[] = [];
+  let tags: Tag[] = [];
   let error = null;
 
   try {
-    tags = await getTagList();
+    tags = await getTags();
   } catch (e) {
     error = e instanceof Error ? e.message : "加载失败";
   }
 
   return (
-    <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "1.25rem 1rem" }}>
-      <h1 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "1.25rem" }}>标签云</h1>
+    <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "1.25rem 1rem 3rem" }}>
+      <h1 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "1.25rem" }}>标签</h1>
 
       {error && (
         <div style={{ background: "#2d0a0a", border: "1px solid #5c1414", borderRadius: "8px", padding: "1rem", color: "#ff6b6b", fontSize: "0.875rem", marginBottom: "1rem" }}>
@@ -28,8 +31,8 @@ export default async function TagsPage() {
       <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
         {tags.map((tag) => (
           <Link
-            key={tag.tag_name}
-            href={`/tags/${encodeURIComponent(tag.tag_name)}`}
+            key={tag.id}
+            href={`/tags/${encodeURIComponent(tag.slug)}`}
             style={{
               display: "inline-flex",
               alignItems: "center",
@@ -44,7 +47,7 @@ export default async function TagsPage() {
             }}
           >
             <span style={{ color: "var(--accent)" }}>#</span>
-            {tag.tag_name}
+            {tag.name}
             <span style={{
               background: "var(--bg-hover)",
               borderRadius: "10px",
@@ -52,7 +55,7 @@ export default async function TagsPage() {
               fontSize: "0.75rem",
               color: "var(--text-muted)",
             }}>
-              {tag.video_count}
+              {tag.videoCount}
             </span>
           </Link>
         ))}

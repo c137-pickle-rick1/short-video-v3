@@ -88,6 +88,8 @@ export interface VideoDetail extends VideoFeedItem {
   isLiked: boolean;
   isBookmarked: boolean;
   isFollowingAuthor?: boolean;
+  categories: { id: number; slug: string; name: string }[];
+  tags: { id: number; slug: string; name: string }[];
 }
 
 export interface CommentItem {
@@ -148,8 +150,24 @@ export interface Category {
   id: number;
   slug: string;
   name: string;
-  groupKey: string;
+  groupId: number;
   sortOrder: number;
   videoCount: number;
   coverUrl: string | null;
+}
+
+export interface CategoryGroup {
+  id: number;
+  slug: string;
+  name: string;
+  sortOrder: number;
+  items: Category[];
+}
+
+export interface Tag {
+  id: number;
+  slug: string;
+  name: string;
+  sortOrder: number;
+  videoCount: number;
 }

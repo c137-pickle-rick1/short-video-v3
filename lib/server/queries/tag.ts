@@ -1,5 +1,5 @@
 import { getDb } from "../../db";
-import type { Category, CategoryGroup, VideoFeedItem } from "../../types";
+import type { Tag, VideoFeedItem } from "../../types";
 import {
   formatDuration,
   formatRelativeTime,
@@ -12,7 +12,7 @@ import {
   getVideoMediaUrls,
 } from "../presenters";
 
-const CATEGORY_FEED_LIMIT = 24;
+const TAG_FEED_LIMIT = 24;
 
 const VIDEO_FEED_SELECT = `
   id, origin, legacy_tweet_id, title, caption, description,
@@ -40,15 +40,7 @@ type VideoRow = {
   author: { id: number; name: string | null; username: string | null; avatar_url: string | null } | null;
 };
 
-type CategoryRow = {
-  id: number;
-  slug: string;
-  name: string;
-  group_id: number;
-  sort_order: number;
-};
-
-type CategoryGroupRow = {
+type TagRow = {
   id: number;
   slug: string;
   name: string;
@@ -78,89 +70,55 @@ function mapRowToFeedItem(row: VideoRow): VideoFeedItem {
   };
 }
 
-type AssignmentWithPoster = { category_id: number; video: { poster_url: string | null } | null };
-
-export async function getCategoryGroups(): Promise<CategoryGroup[]> {
+export async function getTags(): Promise<Tag[]> {
   const db = getDb();
-  const [{ data: groups }, { data: categories }, { data: counts }, { data: covers }] = await Promise.all([
-    db.from("category_groups")
+  const [{ data: tags }, { data: counts }] = await Promise.all([
+    db.from("tags")
       .select("id, slug, name, sort_order")
       .order("sort_order", { ascending: true })
       .order("id", { ascending: true }),
-    db.from("categories")
-      .select("id, slug, name, group_id, sort_order")
-      .order("group_id", { ascending: true })
-      .order("sort_order", { ascending: true })
-      .order("id", { ascending: true }),
-    db.from("video_category_assignments").select("category_id"),
-    db.from("video_category_assignments")
-      .select("category_id, video:videos!video_id(poster_url)")
-      .order("created_at", { ascending: false }),
+    db.from("video_tag_assignments").select("tag_id"),
   ]);
 
-  if (!groups || groups.length === 0 || !categories || categories.length === 0) return [];
+  if (!tags || tags.length === 0) return [];
 
   const countMap = new Map<number, number>();
-  for (const row of (counts ?? []) as { category_id: number }[]) {
-    countMap.set(row.category_id, (countMap.get(row.category_id) ?? 0) + 1);
+  for (const row of (counts ?? []) as { tag_id: number }[]) {
+    countMap.set(row.tag_id, (countMap.get(row.tag_id) ?? 0) + 1);
   }
 
-  const coverMap = new Map<number, string | null>();
-  for (const row of (covers ?? []) as unknown as AssignmentWithPoster[]) {
-    if (!coverMap.has(row.category_id) && row.video?.poster_url) {
-      coverMap.set(row.category_id, row.video.poster_url);
-    }
-  }
-
-  const itemsByGroup = new Map<number, Category[]>();
-  for (const category of categories as CategoryRow[]) {
-    const items = itemsByGroup.get(category.group_id) ?? [];
-    items.push({
-      id: category.id,
-      slug: category.slug,
-      name: category.name,
-      groupId: category.group_id,
-      sortOrder: category.sort_order,
-      videoCount: countMap.get(category.id) ?? 0,
-      coverUrl: coverMap.get(category.id) ?? null,
-    });
-    itemsByGroup.set(category.group_id, items);
-  }
-
-  return (groups as CategoryGroupRow[])
-    .map((group) => ({
-      id: group.id,
-      slug: group.slug,
-      name: group.name,
-      sortOrder: group.sort_order,
-      items: itemsByGroup.get(group.id) ?? [],
-    }))
-    .filter((group) => group.items.length > 0);
+  return (tags as TagRow[]).map((tag) => ({
+      id: tag.id,
+      slug: tag.slug,
+      name: tag.name,
+      sortOrder: tag.sort_order,
+      videoCount: countMap.get(tag.id) ?? 0,
+    }));
 }
 
-export async function getVideosByCategory(
+export async function getVideosByTag(
   slug: string,
   page = 1
-): Promise<{ items: VideoFeedItem[]; total: number; category: { name: string; slug: string } | null }> {
-  const { data: cat } = await getDb()
-    .from("categories")
+): Promise<{ items: VideoFeedItem[]; total: number; tag: { name: string; slug: string } | null }> {
+  const { data: tag } = await getDb()
+    .from("tags")
     .select("id, name, slug")
     .eq("slug", slug)
     .single();
 
-  if (!cat) return { items: [], total: 0, category: null };
+  if (!tag) return { items: [], total: 0, tag: null };
 
   const { data: assignments, count } = await getDb()
-    .from("video_category_assignments")
+    .from("video_tag_assignments")
     .select("video_id", { count: "exact" })
-    .eq("category_id", cat.id);
+    .eq("tag_id", tag.id);
 
   if (!assignments || assignments.length === 0) {
-    return { items: [], total: 0, category: { name: cat.name, slug: cat.slug } };
+    return { items: [], total: 0, tag: { name: tag.name, slug: tag.slug } };
   }
 
-  const videoIds = (assignments as { video_id: number }[]).map((a) => a.video_id);
-  const offset = (page - 1) * CATEGORY_FEED_LIMIT;
+  const videoIds = (assignments as { video_id: number }[]).map((assignment) => assignment.video_id);
+  const offset = (page - 1) * TAG_FEED_LIMIT;
 
   const { data: videos } = await getDb()
     .from("videos")
@@ -169,11 +127,11 @@ export async function getVideosByCategory(
     .eq("status", "published")
     .eq("visibility", "public")
     .order("created_at", { ascending: false })
-    .range(offset, offset + CATEGORY_FEED_LIMIT - 1);
+    .range(offset, offset + TAG_FEED_LIMIT - 1);
 
   return {
     items: (videos ?? []).map((row) => mapRowToFeedItem(row as unknown as VideoRow)),
     total: count ?? videoIds.length,
-    category: { name: cat.name, slug: cat.slug },
+    tag: { name: tag.name, slug: tag.slug },
   };
 }

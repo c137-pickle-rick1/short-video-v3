@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { extname } from "node:path";
 import { cookies } from "next/headers";
 import { resolveViewerUserIdFromCookieToken } from "@/lib/server/auth";
-import { execute } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { uploadSourceVideoToStorage, isAllowedVideoFile, getVideoSizeLimit } from "@/lib/server/storage";
 
 const MAX_TITLE_LENGTH = 120;
@@ -59,41 +59,45 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: message }, { status: 500 });
   }
 
-  // Create video + upload job in a transaction
+  // Create the video record first, then add the upload job.
   try {
-    await execute("begin");
+    const db = getDb();
 
-    const videoResult = await execute<{ id: number; status: string }>(
-      `insert into public.videos
-        (origin, uploader_user_id, title, description, visibility, status, published_at)
-       values ('manual_upload', $1, $2, $3, 'public', 'queued', null)
-       returning id, status`,
-      [viewerUserId, title, tags],
-    );
+    const { data: createdVideo, error: videoError } = await db
+      .from("videos")
+      .insert({
+        origin: "manual_upload",
+        uploader_user_id: viewerUserId,
+        title,
+        description: tags,
+        visibility: "public",
+        status: "queued",
+        published_at: null,
+      })
+      .select("id, status")
+      .single();
 
-    const createdVideo = videoResult.rows[0];
-
-    if (!createdVideo) {
-      await execute("rollback");
+    if (videoError || !createdVideo) {
       return NextResponse.json({ error: "创建视频记录失败" }, { status: 500 });
     }
 
-    await execute(
-      `insert into public.video_upload_jobs
-        (video_id, uploader_user_id, source_storage_disk, source_object_path,
-         source_filename, source_content_type, source_size_bytes, status)
-       values ($1, $2, 'supabase', $3, $4, $5, $6, 'queued')`,
-      [
-        createdVideo.id,
-        viewerUserId,
-        sourceObjectPath,
-        sourceFilename,
-        contentType,
-        file.size,
-      ],
-    );
+    const { error: jobError } = await db
+      .from("video_upload_jobs")
+      .insert({
+        video_id: createdVideo.id,
+        uploader_user_id: viewerUserId,
+        source_storage_disk: "supabase",
+        source_object_path: sourceObjectPath,
+        source_filename: sourceFilename,
+        source_content_type: contentType,
+        source_size_bytes: file.size,
+        status: "queued",
+      });
 
-    await execute("commit");
+    if (jobError) {
+      await db.from("videos").delete().eq("id", createdVideo.id);
+      return NextResponse.json({ error: "创建上传任务失败" }, { status: 500 });
+    }
 
     return NextResponse.json({
       id: createdVideo.id,
@@ -101,7 +105,6 @@ export async function POST(request: Request) {
       title,
     });
   } catch (err) {
-    await execute("rollback").catch(() => {});
     const message = err instanceof Error ? err.message : "服务器内部错误";
     return NextResponse.json({ error: message }, { status: 500 });
   }

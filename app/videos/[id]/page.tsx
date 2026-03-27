@@ -11,7 +11,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import type { CommentItem, VideoFeedItem } from "@/lib/types";
+import type { VideoFeedItem } from "@/lib/types";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -24,13 +24,11 @@ async function CommentsSection({
   viewerLoggedIn,
   viewerName,
   viewerImage,
-  commentCount,
 }: {
   videoId: string;
   viewerLoggedIn: boolean;
   viewerName?: string | null;
   viewerImage?: string | null;
-  commentCount: number;
 }) {
   const comments = await getVideoComments(parseInt(videoId, 10));
   return (
@@ -75,9 +73,10 @@ export default async function VideoDetailPage({ params }: PageProps) {
 
   // Record view (fire-and-forget — send from client via history API)
   const viewerLoggedIn = viewerUserId !== null;
-  const canFollowAuthor = typeof video.author.userId === "number"
-    && video.author.userId > 0
-    && viewerUserId !== video.author.userId;
+  const authorUserId = typeof video.author.userId === "number" && video.author.userId > 0
+    ? video.author.userId
+    : null;
+  const canFollowAuthor = authorUserId !== null && viewerUserId !== authorUserId;
   const viewerImage = viewerProfile
     ? (viewerProfile.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(viewerProfile.name ?? viewerProfile.username ?? "U")}&backgroundColor=e5192a&textColor=ffffff`)
     : null;
@@ -95,7 +94,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
             <VideoPlayer video={video} />
 
             {/* Reactions: directly below video */}
-            <div style={{ marginTop: "12px", marginBottom: "12px" }}>
+            <div style={{ marginTop: "12px", marginBottom: "20px" }}>
               <VideoDetailReactions
                 videoId={video.videoId}
                 initialLikes={video.likeCount}
@@ -105,32 +104,83 @@ export default async function VideoDetailPage({ params }: PageProps) {
               />
             </div>
 
-            {/* Title & reactions */}
-            <div style={{ marginTop: "14px" }}>
-              <h1 style={{ fontSize: "1.1rem", fontWeight: 700, lineHeight: 1.4, marginBottom: "10px" }}>
-                {video.displayText || "无标题"}
-              </h1>
+            {/* Title & meta */}
+            <div>
+              {/* 标题 + 分类/标签 作为一组 */}
+              <div style={{ marginBottom: "20px" }}>
+                <h1 style={{ fontSize: "1.5rem", fontWeight: 700, lineHeight: 1.4, marginBottom: "12px" }}>
+                  {video.displayText || "无标题"}
+                </h1>
 
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "10px", marginBottom: "16px" }}>
-                {/* Author */}
-                <Link href={video.author.profileUrl} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                {/* Categories & Tags */}
+                {(video.categories.length > 0 || video.tags.length > 0) && (
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                    {video.categories.map((cat) => (
+                      <Link
+                        key={cat.id}
+                        href={`/categories/${cat.slug}`}
+                        style={{
+                          display: "inline-block",
+                          padding: "3px 10px",
+                          borderRadius: "6px",
+                          fontSize: "1rem",
+                          fontWeight: 500,
+                          background: "var(--bg-card)",
+                          color: "var(--text-secondary)",
+                          textDecoration: "none",
+                          lineHeight: 1.6,
+                          transition: "background 0.15s",
+                          border: "1px solid var(--border-light)",
+                        }}
+                      >
+                        {cat.name}
+                      </Link>
+                    ))}
+                    {video.tags.map((tag) => (
+                      <Link
+                        key={tag.id}
+                        href={`/tags/${tag.slug}`}
+                        style={{
+                          display: "inline-block",
+                          padding: "3px 10px",
+                          borderRadius: "6px",
+                          fontSize: "1rem",
+                          fontWeight: 500,
+                          background: "var(--bg-card)",
+                          color: "var(--text-secondary)",
+                          textDecoration: "none",
+                          lineHeight: 1.6,
+                          transition: "background 0.15s",
+                          border: "1px solid var(--border-light)",
+                        }}
+                      >
+                        {tag.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* 作者信息 作为独立区块 */}
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", paddingTop: "16px", paddingBottom: "16px", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", marginBottom: "24px" }}>
+                <Link href={video.author.profileUrl} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                   <Image
                     src={video.author.imageUrl}
                     alt={video.author.name}
-                    width={34}
-                    height={34}
-                    style={{ borderRadius: "50%", objectFit: "cover", width: 34, height: 34, flexShrink: 0 }}
+                    width={46}
+                    height={46}
+                    style={{ borderRadius: "50%", objectFit: "cover", width: 46, height: 46, flexShrink: 0 }}
                     unoptimized
                   />
                   <div>
-                    <div style={{ fontWeight: 600, fontSize: "0.875rem", color: "var(--text-primary)" }}>{video.author.name}</div>
-                    <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>{video.postedAtText}</div>
+                    <div style={{ fontWeight: 600, fontSize: "1rem", color: "var(--text-primary)" }}>{video.author.name}</div>
+                    <div style={{ fontSize: "0.8125rem", color: "var(--text-muted)" }}>{video.postedAtText}</div>
                   </div>
                 </Link>
 
                 {canFollowAuthor ? (
                   <ProfileFollowButton
-                    targetUserId={video.author.userId}
+                    targetUserId={authorUserId}
                     initialFollowing={Boolean(video.isFollowingAuthor)}
                   />
                 ) : null}
@@ -145,7 +195,6 @@ export default async function VideoDetailPage({ params }: PageProps) {
                   viewerLoggedIn={viewerLoggedIn}
                   viewerName={viewerProfile?.name}
                   viewerImage={viewerImage}
-                  commentCount={video.commentCount}
                 />
               </Suspense>
             </div>
@@ -191,5 +240,3 @@ export default async function VideoDetailPage({ params }: PageProps) {
     </>
   );
 }
-
-

@@ -15,7 +15,6 @@ import {
 } from "../presenters";
 
 const HOME_FEED_LIMIT = 24;
-const EXPLORE_FEED_LIMIT = 48;
 const RANKING_LIMIT = 10;
 
 export const EXPLORE_FEED_SORT_KEYS = ["latest", "likes", "bookmarks", "comments"] as const;
