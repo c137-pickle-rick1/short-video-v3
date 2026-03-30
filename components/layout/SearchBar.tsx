@@ -1,6 +1,6 @@
 "use client";
 
-import { MagnifyingGlass } from "@phosphor-icons/react";
+import { MagnifyingGlassIcon } from "@phosphor-icons/react";
 
 export default function SearchBar({ defaultValue = "" }: { defaultValue?: string }) {
   return (
@@ -16,7 +16,7 @@ export default function SearchBar({ defaultValue = "" }: { defaultValue?: string
           height: "36px",
         }}
       />
-      <MagnifyingGlass
+      <MagnifyingGlassIcon
         size={16}
         weight="regular"
         style={{
