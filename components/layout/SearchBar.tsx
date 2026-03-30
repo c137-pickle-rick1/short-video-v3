@@ -10,7 +10,7 @@ export default function SearchBar({ defaultValue = "" }: { defaultValue?: string
         name="q"
         defaultValue={defaultValue}
         placeholder="搜索视频、关键词"
-        className="pl-9 pr-3 py-1.5 text-sm h-9"
+        className="!pl-9 pr-3 py-1.5 text-sm h-9"
       />
       <MagnifyingGlassIcon
         size={16}

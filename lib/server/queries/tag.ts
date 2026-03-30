@@ -98,7 +98,8 @@ export async function getTags(): Promise<Tag[]> {
 
 export async function getVideosByTag(
   slug: string,
-  page = 1
+  page = 1,
+  sort: import("../queries/feed").ExploreFeedSortKey = "latest"
 ): Promise<{ items: VideoFeedItem[]; total: number; tag: { name: string; slug: string } | null }> {
   const { data: tag } = await getDb()
     .from("tags")
@@ -118,20 +119,52 @@ export async function getVideosByTag(
   }
 
   const videoIds = (assignments as { video_id: number }[]).map((assignment) => assignment.video_id);
-  const offset = (page - 1) * TAG_FEED_LIMIT;
+  const total = count ?? videoIds.length;
 
+  if (sort === "latest") {
+    const offset = (page - 1) * TAG_FEED_LIMIT;
+    const { data: videos } = await getDb()
+      .from("videos")
+      .select(VIDEO_FEED_SELECT)
+      .in("id", videoIds)
+      .eq("status", "published")
+      .eq("visibility", "public")
+      .order("created_at", { ascending: false })
+      .range(offset, offset + TAG_FEED_LIMIT - 1);
+    return {
+      items: (videos ?? []).map((row) => mapRowToFeedItem(row as unknown as VideoRow)),
+      total,
+      tag: { name: tag.name, slug: tag.slug },
+    };
+  }
+
+  const selectStr = `${VIDEO_FEED_SELECT}, like_count:video_likes(count), bookmark_count:video_bookmarks(count), comment_count:video_comments(count)`;
   const { data: videos } = await getDb()
     .from("videos")
-    .select(VIDEO_FEED_SELECT)
+    .select(selectStr)
     .in("id", videoIds)
     .eq("status", "published")
-    .eq("visibility", "public")
-    .order("created_at", { ascending: false })
-    .range(offset, offset + TAG_FEED_LIMIT - 1);
+    .eq("visibility", "public");
 
+  type RowWithCounts = VideoRow & {
+    like_count?: { count: number }[];
+    bookmark_count?: { count: number }[];
+    comment_count?: { count: number }[];
+  };
+
+  const rows = (videos ?? []) as unknown as RowWithCounts[];
+  rows.sort((a, b) => {
+    const getCount = (r: RowWithCounts) =>
+      sort === "likes" ? (r.like_count?.[0]?.count ?? 0)
+      : sort === "bookmarks" ? (r.bookmark_count?.[0]?.count ?? 0)
+      : (r.comment_count?.[0]?.count ?? 0);
+    return getCount(b) - getCount(a);
+  });
+
+  const offset = (page - 1) * TAG_FEED_LIMIT;
   return {
-    items: (videos ?? []).map((row) => mapRowToFeedItem(row as unknown as VideoRow)),
-    total: count ?? videoIds.length,
+    items: rows.slice(offset, offset + TAG_FEED_LIMIT).map(mapRowToFeedItem),
+    total,
     tag: { name: tag.name, slug: tag.slug },
   };
 }

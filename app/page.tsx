@@ -1,17 +1,11 @@
 import { getHomeFeedItems, getExploreFeedItems, normalizeExploreFeedSort, normalizeFeedSearchQuery } from "@/lib/server/queries/feed";
 import VideoGrid from "@/components/video/VideoGrid";
 import Pagination from "@/components/layout/Pagination";
+import SortBar from "@/components/layout/SortBar";
 import Link from "next/link";
 import type { VideoFeedItem } from "@/lib/types";
 
 const PAGE_SIZE = 24;
-
-const SORT_OPTIONS = [
-  { key: "latest", label: "最新" },
-  { key: "likes", label: "点赞最多" },
-  { key: "bookmarks", label: "收藏最多" },
-  { key: "comments", label: "评论最多" },
-];
 
 export default async function HomePage({
   searchParams,
@@ -62,21 +56,16 @@ export default async function HomePage({
       )}
 
       {/* Sort tabs */}
-      <div className="flex gap-1.5 mb-5 flex-wrap">
-        {SORT_OPTIONS.map((opt) => (
-          <Link
-            key={opt.key}
-            href={`/?sort=${opt.key}${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ""}`}
-            className={`px-3.5 py-1 rounded-full text-[0.8125rem] border transition-all ${
-              sort === opt.key
-                ? "font-semibold bg-accent text-white border-accent"
-                : "font-normal bg-bg-card text-text-secondary border-border"
-            }`}
-          >
-            {opt.label}
-          </Link>
-        ))}
-      </div>
+      <SortBar
+        currentSort={sort}
+        basePath="/"
+        extraParams={searchQuery ? { q: searchQuery } : undefined}
+        title={searchQuery ? (
+          <span className="text-base text-text-secondary font-normal">
+            <span className="text-text-primary font-semibold">{total}</span> 条相关结果
+          </span>
+        ) : undefined}
+      />
 
       {/* Video grid */}
       <VideoGrid videos={videos} />

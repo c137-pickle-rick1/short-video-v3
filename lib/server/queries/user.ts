@@ -202,6 +202,29 @@ export async function getMyVideos(viewerUserId: number): Promise<MyUploadedVideo
   }));
 }
 
+export async function getViewerWatchHeatmap(viewerUserId: number): Promise<{ date: string; count: number }[]> {
+  const from = new Date();
+  from.setDate(from.getDate() - 371); // ~53 weeks back with buffer
+  const y = from.getFullYear();
+  const m = String(from.getMonth() + 1).padStart(2, "0");
+  const d = String(from.getDate()).padStart(2, "0");
+  const fromDate = `${y}-${m}-${d}`;
+
+  const { data } = await getDb()
+    .from("video_views")
+    .select("view_date")
+    .eq("user_id", viewerUserId)
+    .gte("view_date", fromDate);
+
+  const counts: Record<string, number> = {};
+  for (const row of data ?? []) {
+    const d = String(row.view_date).split("T")[0];
+    counts[d] = (counts[d] ?? 0) + 1;
+  }
+
+  return Object.entries(counts).map(([date, count]) => ({ date, count }));
+}
+
 export async function getViewerFollowStats(viewerUserId: number): Promise<{ followingCount: number; followerCount: number }> {
   const [followingRes, followerRes] = await Promise.all([
     getDb().from("user_follows").select("*", { count: "exact", head: true }).eq("follower_user_id", viewerUserId),

@@ -1,5 +1,6 @@
 import { getViewerProfile } from "@/lib/server/queries/video";
-import { getViewerFollowStats } from "@/lib/server/queries/user";
+import { getViewerFollowStats, getViewerWatchHeatmap } from "@/lib/server/queries/user";
+import WatchHeatmap from "@/components/profile/WatchHeatmap";
 import { resolveViewerUserIdFromCookieToken } from "@/lib/server/auth";
 import ProfileEditorForm from "@/components/profile/ProfileEditorForm";
 import LogoutButton from "@/components/profile/LogoutButton";
@@ -17,10 +18,14 @@ export default async function MePage() {
   const profile = await getViewerProfile(viewerUserId);
   if (!profile) redirect("/login");
 
-  const [followStats] = await Promise.allSettled([getViewerFollowStats(viewerUserId)]);
+  const [followStats, heatmapResult] = await Promise.allSettled([
+    getViewerFollowStats(viewerUserId),
+    getViewerWatchHeatmap(viewerUserId),
+  ]);
   const stats = followStats.status === "fulfilled"
     ? followStats.value
     : { followingCount: 0, followerCount: 0 };
+  const heatmapData = heatmapResult.status === "fulfilled" ? heatmapResult.value : [];
 
   const avatarUrl = profile.avatarUrl
     || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(profile.name ?? profile.username ?? "U")}&backgroundColor=e5192a&textColor=ffffff`;
@@ -57,6 +62,9 @@ export default async function MePage() {
           {profileCard}
         </Link>
       ) : profileCard}
+
+      {/* Watch heatmap */}
+      <WatchHeatmap data={heatmapData} />
 
       {/* Quick links */}
       <div className="flex gap-2.5 flex-wrap mb-7">

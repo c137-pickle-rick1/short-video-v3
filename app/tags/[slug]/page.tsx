@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
 import Pagination from "@/components/layout/Pagination";
+import SortBar from "@/components/layout/SortBar";
 import VideoGrid from "@/components/video/VideoGrid";
 import { getVideosByTag } from "@/lib/server/queries/tag";
+import { normalizeExploreFeedSort } from "@/lib/server/queries/feed";
 import type { VideoFeedItem } from "@/lib/types";
 
 const PAGE_SIZE = 24;
@@ -11,17 +13,18 @@ export default async function TagDetailPage({
   searchParams,
 }: {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string; sort?: string }>;
 }) {
   const { slug } = await params;
-  const { page: pageParam } = await searchParams;
+  const { page: pageParam, sort: sortParam } = await searchParams;
   const page = Math.max(1, parseInt(pageParam ?? "1", 10) || 1);
+  const sort = normalizeExploreFeedSort(sortParam);
 
   let videos: VideoFeedItem[] = [];
   let total = 0;
   let tagName = "";
 
-  const result = await getVideosByTag(slug, page);
+  const result = await getVideosByTag(slug, page, sort);
   if (!result.tag) notFound();
 
   videos = result.items;
@@ -32,17 +35,11 @@ export default async function TagDetailPage({
 
   return (
     <div className="max-w-[1400px] mx-auto p-4">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-text-primary m-0">
-          <span className="text-accent">#</span>
-          {tagName}
-        </h1>
-        {total > 0 && (
-          <p className="mt-1 text-sm text-text-secondary">
-            共 {total} 个视频
-          </p>
-        )}
-      </div>
+      <SortBar
+        currentSort={sort}
+        basePath={`/tags/${slug}`}
+        title={<><span className="text-accent">#</span>{tagName}</>}
+      />
 
       {videos.length === 0 ? (
         <p className="text-text-secondary text-center py-12">
@@ -56,7 +53,7 @@ export default async function TagDetailPage({
         <Pagination
           currentPage={page}
           totalPages={totalPages}
-          basePath={`/tags/${slug}`}
+          basePath={`/tags/${slug}${sort !== "latest" ? `?sort=${sort}` : ""}`}
         />
       )}
     </div>
