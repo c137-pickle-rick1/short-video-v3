@@ -69,7 +69,7 @@ export default function WatchHeatmap({ data }: Props) {
   return (
     <div className="bg-bg-card border border-border rounded-xl p-5 mb-6">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-sm font-semibold text-text-primary">看片热力图</h2>
+        <h2 className="text-base font-semibold text-text-primary">看片热力图</h2>
         <span className="text-xs text-text-secondary">
           过去一年 {totalVideos} 次观看 · {activeDays} 天
         </span>

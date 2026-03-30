@@ -1,5 +1,5 @@
 import { getDb } from "../../db";
-import type { VideoFeedItem, RankingItem } from "../../types";
+import type { VideoFeedItem, RankingItem, RankingPeriod, CreatorRankingItem, VideoRankingItem } from "../../types";
 import {
   formatDuration,
   formatRelativeTime,
@@ -287,4 +287,231 @@ export async function getRankingItems(viewerUserId?: number | null): Promise<Ran
     lastPublishedAtText: formatRelativeTime(entry.lastPublishedAt),
     isFollowing: followedSet.has(entry.user.id),
   }));
+}
+
+// ── New ranking system ──────────────────────────────────────────────────────
+
+function getPeriodCutoff(period: RankingPeriod): string {
+  const days = period === "week" ? 7 : 30;
+  return new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+}
+
+async function enrichCreatorRanking(
+  userStatMap: Map<number, number>,
+  viewerUserId?: number | null,
+): Promise<CreatorRankingItem[]> {
+  const topEntries = Array.from(userStatMap.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, RANKING_LIMIT);
+
+  if (topEntries.length === 0) return [];
+  const topUserIds = topEntries.map(([uid]) => uid);
+
+  const { data: users } = await getDb()
+    .from("users")
+    .select("id, name, username, avatar_url")
+    .in("id", topUserIds);
+  const userMap = new Map((users ?? []).map((u: { id: number; name: string | null; username: string | null; avatar_url: string | null }) => [u.id, u]));
+
+  let followedSet = new Set<number>();
+  if (viewerUserId) {
+    const { data: followRows } = await getDb()
+      .from("user_follows")
+      .select("followed_user_id")
+      .eq("follower_user_id", viewerUserId)
+      .in("followed_user_id", topUserIds);
+    followedSet = new Set((followRows ?? []).map((r) => r.followed_user_id));
+  }
+
+  return topEntries.map(([userId, statCount], idx) => {
+    const u = userMap.get(userId);
+    return {
+      rank: idx + 1,
+      userId,
+      name: getDisplayName(u?.name ?? null, u?.username ?? null),
+      username: u?.username ?? "",
+      handle: getHandle(u?.username ?? null),
+      imageUrl: normalizeAvatarUrl(u?.avatar_url ?? null, u?.name ?? null, u?.username ?? null),
+      profileUrl: getProfileUrl(u?.username ?? null),
+      statCount,
+      isFollowing: followedSet.has(userId),
+    };
+  });
+}
+
+async function enrichVideoRanking(
+  videoStatMap: Map<number, number>,
+): Promise<VideoRankingItem[]> {
+  const topEntries = Array.from(videoStatMap.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, RANKING_LIMIT);
+
+  if (topEntries.length === 0) return [];
+  const topVideoIds = topEntries.map(([vid]) => vid);
+
+  const { data: videos } = await getDb()
+    .from("videos")
+    .select(`
+      id, title, caption, description, poster_url,
+      duration_text, duration_seconds, width, height,
+      author:users!uploader_user_id(id, name, username, avatar_url)
+    `)
+    .in("id", topVideoIds)
+    .eq("status", "published");
+
+  type VRow = {
+    id: number;
+    title: string | null;
+    caption: string | null;
+    description: string | null;
+    poster_url: string | null;
+    duration_text: string | null;
+    duration_seconds: number | null;
+    width: number | null;
+    height: number | null;
+    author: { id: number; name: string | null; username: string | null; avatar_url: string | null } | null;
+  };
+
+  const videoMap = new Map((videos ?? []).map((v) => [(v as unknown as VRow).id, v as unknown as VRow]));
+  const statMap = new Map(topEntries);
+
+  return topEntries
+    .map(([videoId], idx) => {
+      const v = videoMap.get(videoId);
+      if (!v) return null;
+      return {
+        rank: idx + 1,
+        videoId,
+        title: getVideoSummary(v.title, v.caption, v.description),
+        posterUrl: v.poster_url ?? "",
+        detailUrl: getVideoUrl(videoId),
+        durationText: v.duration_text || formatDuration(v.duration_seconds),
+        frameClass: getFrameClass(v.width, v.height),
+        statCount: statMap.get(videoId) ?? 0,
+        author: {
+          name: getDisplayName(v.author?.name ?? null, v.author?.username ?? null),
+          imageUrl: normalizeAvatarUrl(v.author?.avatar_url ?? null, v.author?.name ?? null, v.author?.username ?? null),
+          profileUrl: getProfileUrl(v.author?.username ?? null),
+        },
+      };
+    })
+    .filter(Boolean) as VideoRankingItem[];
+}
+
+/** 高产创作者 — videos published in period */
+export async function getCreatorPublishRanking(
+  period: RankingPeriod,
+  viewerUserId?: number | null,
+): Promise<CreatorRankingItem[]> {
+  const cutoff = getPeriodCutoff(period);
+  const { data } = await getDb()
+    .from("videos")
+    .select("uploader_user_id, published_at, created_at")
+    .eq("status", "published")
+    .eq("visibility", "public");
+
+  const userStatMap = new Map<number, number>();
+  for (const v of data ?? []) {
+    const uid = (v as unknown as { uploader_user_id: number | null }).uploader_user_id;
+    if (!uid) continue;
+    const publishedAt = ((v as unknown as { published_at: string | null }).published_at
+      ?? (v as unknown as { created_at: string | null }).created_at);
+    if (publishedAt && publishedAt >= cutoff) {
+      userStatMap.set(uid, (userStatMap.get(uid) ?? 0) + 1);
+    }
+  }
+
+  return enrichCreatorRanking(userStatMap, viewerUserId);
+}
+
+/** 人气创作者 — new followers gained in period */
+export async function getCreatorFollowerRanking(
+  period: RankingPeriod,
+  viewerUserId?: number | null,
+): Promise<CreatorRankingItem[]> {
+  const cutoff = getPeriodCutoff(period);
+  const { data } = await getDb()
+    .from("user_follows")
+    .select("followed_user_id")
+    .gte("created_at", cutoff)
+    .limit(50000);
+
+  const userStatMap = new Map<number, number>();
+  for (const row of data ?? []) {
+    const uid = row.followed_user_id;
+    userStatMap.set(uid, (userStatMap.get(uid) ?? 0) + 1);
+  }
+
+  return enrichCreatorRanking(userStatMap, viewerUserId);
+}
+
+/** 最受喜爱创作者 — total likes received on their videos in period */
+export async function getCreatorLikedRanking(
+  period: RankingPeriod,
+  viewerUserId?: number | null,
+): Promise<CreatorRankingItem[]> {
+  const cutoff = getPeriodCutoff(period);
+  const { data: likeRows } = await getDb()
+    .from("video_likes")
+    .select("video_id")
+    .gte("created_at", cutoff)
+    .limit(50000);
+
+  if (!likeRows?.length) return [];
+
+  const videoIds = [...new Set(likeRows.map((r) => r.video_id))];
+  const { data: videos } = await getDb()
+    .from("videos")
+    .select("id, uploader_user_id")
+    .in("id", videoIds)
+    .eq("status", "published");
+
+  const videoAuthorMap = new Map(
+    (videos ?? []).map((v) => [
+      (v as unknown as { id: number }).id,
+      (v as unknown as { uploader_user_id: number | null }).uploader_user_id,
+    ]),
+  );
+
+  const userStatMap = new Map<number, number>();
+  for (const row of likeRows) {
+    const uid = videoAuthorMap.get(row.video_id);
+    if (uid) userStatMap.set(uid, (userStatMap.get(uid) ?? 0) + 1);
+  }
+
+  return enrichCreatorRanking(userStatMap, viewerUserId);
+}
+
+/** 视频排行 — generic for views / likes / bookmarks / comments */
+export async function getVideoStatRanking(
+  stat: "views" | "likes" | "bookmarks" | "comments",
+  period: RankingPeriod,
+): Promise<VideoRankingItem[]> {
+  const cutoff = getPeriodCutoff(period);
+  const tableMap = {
+    views: "video_views",
+    likes: "video_likes",
+    bookmarks: "video_bookmarks",
+    comments: "video_comments",
+  } as const;
+
+  let query = getDb()
+    .from(tableMap[stat])
+    .select("video_id")
+    .gte("created_at", cutoff)
+    .limit(50000);
+
+  if (stat === "comments") {
+    query = query.is("deleted_at", null);
+  }
+
+  const { data } = await query;
+
+  const videoStatMap = new Map<number, number>();
+  for (const row of data ?? []) {
+    const vid = (row as unknown as { video_id: number }).video_id;
+    videoStatMap.set(vid, (videoStatMap.get(vid) ?? 0) + 1);
+  }
+
+  return enrichVideoRanking(videoStatMap);
 }

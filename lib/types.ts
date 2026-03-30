@@ -138,6 +138,37 @@ export interface RankingItem {
   isFollowing: boolean;
 }
 
+export type RankingPeriod = "week" | "month";
+export type RankingTab = "prolific" | "popular" | "loved" | "views" | "likes" | "bookmarks" | "comments";
+
+export interface CreatorRankingItem {
+  rank: number;
+  userId: number;
+  name: string;
+  username: string;
+  handle: string;
+  imageUrl: string;
+  profileUrl: string;
+  statCount: number;
+  isFollowing: boolean;
+}
+
+export interface VideoRankingItem {
+  rank: number;
+  videoId: number;
+  title: string;
+  posterUrl: string;
+  detailUrl: string;
+  durationText: string;
+  frameClass: string;
+  statCount: number;
+  author: {
+    name: string;
+    imageUrl: string;
+    profileUrl: string;
+  };
+}
+
 export interface ViewerProfile {
   id: number;
   name: string | null;
