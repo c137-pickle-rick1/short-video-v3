@@ -6,39 +6,16 @@ interface EmptyStateProps {
 
 export default function EmptyState({ icon = "📭", title, description }: EmptyStateProps) {
   return (
-    <div
-      style={{
-        background: "var(--bg-card)",
-        border: "1px solid var(--border)",
-        borderRadius: "12px",
-        padding: "20px 16px",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: "8px",
-        textAlign: "center",
-      }}
-    >
+    <div className="bg-bg-card border border-border rounded-xl px-4 py-5 flex flex-col items-center justify-center gap-2 text-center">
       <div
         aria-hidden="true"
-        style={{
-          width: "40px",
-          height: "40px",
-          borderRadius: "999px",
-          display: "grid",
-          placeItems: "center",
-          background: "rgba(233, 28, 120, 0.14)",
-          color: "var(--accent)",
-          fontSize: "1.1rem",
-          lineHeight: 1,
-        }}
+        className="w-10 h-10 rounded-full grid place-items-center bg-accent-dim text-accent text-lg leading-none"
       >
         {icon}
       </div>
-      <div style={{ fontSize: "0.95rem", fontWeight: 600, color: "var(--text-primary)" }}>{title}</div>
+      <div className="text-[0.95rem] font-semibold text-text-primary">{title}</div>
       {description ? (
-        <div style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", maxWidth: "320px" }}>{description}</div>
+        <div className="text-[0.8125rem] text-text-secondary max-w-[320px]">{description}</div>
       ) : null}
     </div>
   );

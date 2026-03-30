@@ -19,21 +19,13 @@ export default function ClearHistoryButton() {
     }
   };
 
-  if (done) return <span style={{ fontSize: "0.875rem", color: "var(--text-muted)" }}>已清空</span>;
+  if (done) return <span className="text-sm text-text-muted">已清空</span>;
 
   return (
     <button
       onClick={clear}
       disabled={loading}
-      style={{
-        padding: "6px 14px",
-        fontSize: "0.8125rem",
-        background: "transparent",
-        border: "1px solid var(--border)",
-        borderRadius: "6px",
-        color: "var(--text-secondary)",
-        cursor: loading ? "wait" : "pointer",
-      }}
+      className={`py-1.5 px-3.5 text-[0.8125rem] bg-transparent border border-border rounded-md text-text-secondary ${loading ? "cursor-wait" : "cursor-pointer"}`}
     >
       {loading ? "清空中…" : "清空历史"}
     </button>

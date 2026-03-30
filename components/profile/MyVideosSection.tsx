@@ -40,12 +40,10 @@ function StatusBadge({ status }: { status: string }) {
     : Clock;
 
   return (
-    <span style={{
-      display: "inline-flex", alignItems: "center", gap: "4px",
-      padding: "2px 8px", borderRadius: "20px",
-      fontSize: "0.75rem", fontWeight: 600,
-      background: style.bg, color: style.color,
-    }}>
+    <span
+      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[20px] text-xs font-semibold"
+      style={{ background: style.bg, color: style.color }}
+    >
       <Icon size={12} weight="fill" />
       {STATUS_LABEL[status] ?? status}
     </span>
@@ -66,17 +64,11 @@ export default function MyVideosSection({ initialVideos }: Props) {
   return (
     <div>
       {/* Section header */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
-        <h2 style={{ fontSize: "1rem", fontWeight: 700 }}>我的视频</h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-base font-bold">我的视频</h2>
         <button
           onClick={() => setShowModal(true)}
-          style={{
-            display: "flex", alignItems: "center", gap: "6px",
-            padding: "8px 16px", borderRadius: "8px",
-            background: "#e5192a", color: "#fff",
-            border: "none", fontSize: "0.875rem", fontWeight: 600,
-            cursor: "pointer",
-          }}
+          className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#e5192a] text-white border-none text-sm font-semibold cursor-pointer"
         >
           <UploadSimple size={16} />
           上传视频
@@ -85,62 +77,43 @@ export default function MyVideosSection({ initialVideos }: Props) {
 
       {/* Video list */}
       {videos.length === 0 ? (
-        <div style={{
-          border: "2px dashed #2a2a2a", borderRadius: "12px",
-          padding: "40px 20px", textAlign: "center",
-        }}>
-          <VideoCamera size={40} color="#444" style={{ marginBottom: "12px" }} />
-          <p style={{ fontSize: "0.9375rem", color: "#666" }}>还没有上传任何视频</p>
+        <div className="border-2 border-dashed border-border rounded-xl py-10 px-5 text-center">
+          <VideoCamera size={40} color="#444" className="mb-3" />
+          <p className="text-[0.9375rem] text-[#666]">还没有上传任何视频</p>
           <button
             onClick={() => setShowModal(true)}
-            style={{
-              marginTop: "12px", padding: "8px 20px", borderRadius: "8px",
-              background: "#e5192a", color: "#fff",
-              border: "none", fontSize: "0.875rem", fontWeight: 600,
-              cursor: "pointer",
-            }}
+            className="mt-3 px-5 py-2 rounded-lg bg-[#e5192a] text-white border-none text-sm font-semibold cursor-pointer"
           >
             立即上传
           </button>
         </div>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+        <div className="flex flex-col gap-2.5">
           {videos.map((video) => (
             <div
               key={video.id}
-              style={{
-                display: "flex", alignItems: "center", gap: "12px",
-                background: "#1a1a1a", border: "1px solid #2a2a2a",
-                borderRadius: "10px", padding: "12px",
-              }}
+              className="flex items-center gap-3 bg-[#1a1a1a] border border-border rounded-[10px] p-3"
             >
               {/* Thumbnail */}
-              <div style={{
-                width: "64px", height: "64px", borderRadius: "6px",
-                background: "#242424", flexShrink: 0,
-                overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
+              <div className="w-16 h-16 rounded-md bg-[#242424] shrink-0 overflow-hidden flex items-center justify-center">
                 {video.posterUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={video.posterUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  <img src={video.posterUrl} alt="" className="w-full h-full object-cover" />
                 ) : (
                   <VideoCamera size={24} color="#444" />
                 )}
               </div>
 
               {/* Info */}
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{
-                  fontSize: "0.9375rem", fontWeight: 600,
-                  overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-                }}>
+              <div className="flex-1 min-w-0">
+                <p className="text-[0.9375rem] font-semibold overflow-hidden text-ellipsis whitespace-nowrap">
                   {video.title ?? "未命名视频"}
                 </p>
-                <div style={{ marginTop: "4px" }}>
+                <div className="mt-1">
                   <StatusBadge status={video.status} />
                 </div>
                 {video.status === "upload_failed" && (
-                  <p style={{ fontSize: "0.75rem", color: "#e5192a", marginTop: "4px" }}>
+                  <p className="text-xs text-[#e5192a] mt-1">
                     上传处理失败，请联系站长或重试
                   </p>
                 )}
@@ -150,19 +123,14 @@ export default function MyVideosSection({ initialVideos }: Props) {
               {video.status === "published" && (
                 <a
                   href={`/videos/${video.id}`}
-                  style={{
-                    padding: "6px 14px", borderRadius: "6px",
-                    border: "1px solid #333", color: "#ccc",
-                    fontSize: "0.8125rem", flexShrink: 0,
-                    display: "flex", alignItems: "center",
-                  }}
+                  className="px-3.5 py-1.5 rounded-md border border-border-light text-[#ccc] text-[0.8125rem] shrink-0 flex items-center"
                 >
                   查看
                 </a>
               )}
               {(video.status === "queued" || video.status === "processing") && (
-                <span style={{ color: "#555", fontSize: "0.8125rem", flexShrink: 0, display: "flex", alignItems: "center", gap: "4px" }}>
-                  <ArrowClockwise size={14} style={{ animation: "spin 2s linear infinite" }} />
+                <span className="text-text-muted text-[0.8125rem] shrink-0 flex items-center gap-1">
+                  <ArrowClockwise size={14} className="animate-spin" />
                   等待中
                 </span>
               )}
@@ -177,8 +145,6 @@ export default function MyVideosSection({ initialVideos }: Props) {
           onSuccess={handleUploadSuccess}
         />
       )}
-
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }

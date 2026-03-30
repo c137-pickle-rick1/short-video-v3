@@ -15,46 +15,29 @@ export default async function TagsPage() {
   }
 
   return (
-    <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "1.25rem 1rem 3rem" }}>
-      <h1 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "1.25rem" }}>标签</h1>
+    <div className="max-w-[1100px] mx-auto px-4 pt-5 pb-12">
+      <h1 className="text-xl font-bold mb-5">标签</h1>
 
       {error && (
-        <div style={{ background: "#2d0a0a", border: "1px solid #5c1414", borderRadius: "8px", padding: "1rem", color: "#ff6b6b", fontSize: "0.875rem", marginBottom: "1rem" }}>
+        <div className="bg-[#2d0a0a] border border-[#5c1414] rounded-lg p-4 text-[#ff6b6b] text-sm mb-4">
           ⚠️ {error}
         </div>
       )}
 
       {tags.length === 0 && !error && (
-        <p style={{ color: "var(--text-muted)", textAlign: "center", padding: "3rem" }}>暂无标签</p>
+        <p className="text-text-muted text-center p-12">暂无标签</p>
       )}
 
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+      <div className="flex flex-wrap gap-2.5">
         {tags.map((tag) => (
           <Link
             key={tag.id}
             href={`/tags/${encodeURIComponent(tag.slug)}`}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "6px",
-              padding: "7px 16px",
-              background: "var(--bg-card)",
-              border: "1px solid var(--border)",
-              borderRadius: "20px",
-              fontSize: "0.875rem",
-              color: "var(--text-primary)",
-              transition: "border-color 0.15s, color 0.15s",
-            }}
+            className="inline-flex items-center gap-1.5 py-[7px] px-4 bg-bg-card border border-border rounded-[20px] text-sm text-text-primary transition-colors hover:border-border-light"
           >
-            <span style={{ color: "var(--accent)" }}>#</span>
+            <span className="text-accent">#</span>
             {tag.name}
-            <span style={{
-              background: "var(--bg-hover)",
-              borderRadius: "10px",
-              padding: "1px 7px",
-              fontSize: "0.75rem",
-              color: "var(--text-muted)",
-            }}>
+            <span className="bg-bg-hover rounded-[10px] px-[7px] py-px text-xs text-text-muted">
               {tag.videoCount}
             </span>
           </Link>

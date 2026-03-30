@@ -57,16 +57,16 @@ function CommentRow({ comment, videoId, onDelete, onReply, viewerLoggedIn, viewe
   };
 
   return (
-    <div style={{ display: "flex" }}>
+    <div className="flex">
       {/* Left column: avatar + thread line */}
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0, width: "40px" }}>
-        <Link href={comment.author.profileUrl} style={{ flexShrink: 0 }}>
+      <div className="flex flex-col items-center shrink-0 w-10">
+        <Link href={comment.author.profileUrl} className="shrink-0">
           <Image
             src={comment.author.imageUrl}
             alt={comment.author.name}
             width={32}
             height={32}
-            style={{ borderRadius: "50%", objectFit: "cover", width: 32, height: 32, display: "block" }}
+            className="rounded-full object-cover w-8 h-8 block"
             unoptimized
           />
         </Link>
@@ -75,53 +75,31 @@ function CommentRow({ comment, videoId, onDelete, onReply, viewerLoggedIn, viewe
           <div
             onClick={() => setCollapsed(true)}
             title="折叠回复"
-            className="thread-line-hitarea"
-            style={{
-              flex: 1,
-              width: "20px",
-              marginTop: "2px",
-              cursor: "pointer",
-              display: "flex",
-              justifyContent: "center",
-            }}
+            className="thread-line-hitarea flex-1 w-5 mt-0.5 cursor-pointer flex justify-center"
           >
-            <div className="thread-line-visible" style={{
-              width: "3px",
-              height: "100%",
-              borderRadius: "1.5px",
-              background: "#555",
-              transition: "background 0.15s",
-            }} />
+            <div className="thread-line-visible w-[3px] h-full rounded-[1.5px] bg-[#555] transition-colors" />
           </div>
         )}
       </div>
 
       {/* Right column: header + body + actions + replies */}
-      <div style={{ flex: 1, minWidth: 0, paddingTop: "4px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "2px" }}>
+      <div className="flex-1 min-w-0 pt-1">
+        <div className="flex items-center gap-2 mb-0.5">
           {collapsed && (
             <button
               onClick={() => setCollapsed(false)}
               title="展开回复"
-              style={{
-                background: "none", border: "none", cursor: "pointer", padding: 0,
-                color: "var(--text-muted)", fontSize: "0.875rem", lineHeight: 1,
-                display: "inline-flex", alignItems: "center", justifyContent: "center",
-                width: "16px", height: "16px", borderRadius: "2px",
-                transition: "color 0.15s",
-              }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "var(--accent)"; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "var(--text-muted)"; }}
+              className="bg-transparent border-none cursor-pointer p-0 text-text-muted text-sm leading-none inline-flex items-center justify-center w-4 h-4 rounded-sm transition-colors hover:text-accent"
             >
               +
             </button>
           )}
-          <Link href={comment.author.profileUrl} style={{ fontWeight: 600, fontSize: "0.8125rem", color: "var(--text-primary)" }}>
+          <Link href={comment.author.profileUrl} className="font-semibold text-[0.8125rem] text-text-primary">
             {comment.author.name}
           </Link>
-          <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>{comment.createdAtText}</span>
+          <span className="text-xs text-text-muted">{comment.createdAtText}</span>
           {comment.editedAtText && (
-            <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>(已编辑)</span>
+            <span className="text-xs text-text-muted">(已编辑)</span>
           )}
         </div>
 
@@ -129,32 +107,22 @@ function CommentRow({ comment, videoId, onDelete, onReply, viewerLoggedIn, viewe
           /* Collapsed: single-line summary */
           <p
             onClick={() => setCollapsed(false)}
-            style={{
-              fontSize: "0.8125rem", color: "var(--text-muted)", cursor: "pointer",
-              overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-              marginTop: "2px",
-            }}
+            className="text-[0.8125rem] text-text-muted cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap mt-0.5"
           >
             {comment.body.slice(0, 60)}{comment.body.length > 60 ? "…" : ""}
-            {hasReplies && <span style={{ marginLeft: "6px" }}>({comment.replies!.length} 条回复)</span>}
+            {hasReplies && <span className="ml-1.5">({comment.replies!.length} 条回复)</span>}
           </p>
         ) : (
           <>
-            <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", lineHeight: 1.5, wordBreak: "break-word" }}>
+            <p className="text-sm text-text-secondary leading-relaxed break-words">
               {comment.body}
             </p>
 
             {/* Action buttons */}
-            <div style={{ display: "flex", gap: "12px", marginTop: "6px" }}>
+            <div className="flex gap-3 mt-1.5">
               <button
                 onClick={handleReplyClick}
-                style={{
-                  background: "none", border: "none", cursor: "pointer",
-                  color: "var(--text-muted)", fontSize: "0.75rem", padding: "2px 0",
-                  transition: "color 0.15s",
-                }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "var(--text-primary)"; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "var(--text-muted)"; }}
+                className="bg-transparent border-none cursor-pointer text-text-muted text-xs py-0.5 px-0 transition-colors hover:text-text-primary"
               >
                 回复
               </button>
@@ -162,14 +130,7 @@ function CommentRow({ comment, videoId, onDelete, onReply, viewerLoggedIn, viewe
                 <button
                   onClick={handleDelete}
                   disabled={deleting}
-                  style={{
-                    background: "none", border: "none",
-                    cursor: deleting ? "not-allowed" : "pointer",
-                    color: "var(--text-muted)", fontSize: "0.75rem", padding: "2px 0",
-                    transition: "color 0.15s",
-                  }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "var(--accent)"; }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "var(--text-muted)"; }}
+                  className={`bg-transparent border-none text-text-muted text-xs py-0.5 px-0 transition-colors hover:text-accent ${deleting ? "cursor-not-allowed" : "cursor-pointer"}`}
                   title="删除评论"
                 >
                   {deleting ? "删除中…" : "删除"}
@@ -179,12 +140,12 @@ function CommentRow({ comment, videoId, onDelete, onReply, viewerLoggedIn, viewe
 
             {/* Inline reply box */}
             {showReplyBox && (
-              <div style={{ display: "flex", gap: "8px", marginTop: "10px" }}>
+              <div className="flex gap-2 mt-2.5">
                 {viewerImage && (
                   <Image src={viewerImage} alt={viewerName ?? "我"} width={24} height={24}
-                    style={{ borderRadius: "50%", objectFit: "cover", width: 24, height: 24, flexShrink: 0, marginTop: "6px" }} unoptimized />
+                    className="rounded-full object-cover w-6 h-6 shrink-0 mt-1.5" unoptimized />
                 )}
-                <div style={{ flex: 1 }}>
+                <div className="flex-1">
                   <textarea
                     value={replyBody}
                     onChange={(e) => setReplyBody(e.target.value)}
@@ -192,28 +153,19 @@ function CommentRow({ comment, videoId, onDelete, onReply, viewerLoggedIn, viewe
                     disabled={posting}
                     rows={2}
                     autoFocus
-                    style={{
-                      width: "100%", background: "var(--bg-input)", border: "1px solid var(--border)",
-                      borderRadius: "8px", padding: "8px 10px", color: "var(--text-primary)",
-                      fontSize: "0.875rem", resize: "vertical", outline: "none",
-                      boxSizing: "border-box",
-                    }}
+                    className="w-full bg-[var(--bg-input)] border border-border rounded-lg py-2 px-2.5 text-text-primary text-sm resize-y outline-none box-border"
                   />
-                  <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end", marginTop: "6px" }}>
+                  <div className="flex gap-2 justify-end mt-1.5">
                     <button
                       onClick={() => { setShowReplyBox(false); setReplyBody(""); }}
-                      style={{
-                        background: "none", border: "1px solid var(--border)", borderRadius: "6px",
-                        padding: "5px 14px", fontSize: "0.8125rem", color: "var(--text-secondary)", cursor: "pointer",
-                      }}
+                      className="bg-transparent border border-border rounded-md py-[5px] px-3.5 text-[0.8125rem] text-text-secondary cursor-pointer"
                     >
                       取消
                     </button>
                     <button
                       onClick={handleReplySubmit}
                       disabled={posting || !replyBody.trim()}
-                      className="btn-primary"
-                      style={{ padding: "5px 14px", fontSize: "0.8125rem" }}
+                      className="inline-flex items-center gap-1.5 rounded-md bg-accent py-[5px] px-3.5 text-[0.8125rem] font-semibold text-white border-none cursor-pointer transition-colors hover:bg-accent-hover disabled:opacity-50"
                     >
                       {posting ? "发送中…" : "回复"}
                     </button>
@@ -224,7 +176,7 @@ function CommentRow({ comment, videoId, onDelete, onReply, viewerLoggedIn, viewe
 
             {/* Replies — no extra indent, the thread line provides the visual cue */}
             {hasReplies && (
-              <div style={{ marginTop: "8px" }}>
+              <div className="mt-2">
                 {comment.replies!.map((reply) => (
                   <CommentRow
                     key={reply.id}
@@ -313,37 +265,31 @@ export default function CommentsList({ videoId, initialComments, viewerLoggedIn,
 
   return (
     <div>
-      <h3 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: "16px" }}>
+      <h3 className="text-base font-bold mb-4">
         评论 ({comments.reduce((acc, c) => acc + 1 + (c.replies?.length ?? 0), 0)})
       </h3>
 
       {/* Comment input */}
-      <div style={{ display: "flex", gap: "10px", marginBottom: "24px" }}>
+      <div className="flex gap-2.5 mb-6">
         {viewerImage && (
           <Image src={viewerImage} alt={viewerName ?? "我"} width={32} height={32}
-            style={{ borderRadius: "50%", objectFit: "cover", width: 32, height: 32, flexShrink: 0 }} unoptimized />
+            className="rounded-full object-cover w-8 h-8 shrink-0" unoptimized />
         )}
-        <div style={{ flex: 1 }}>
+        <div className="flex-1">
           <textarea
             value={body}
             onChange={(e) => setBody(e.target.value)}
             placeholder={viewerLoggedIn ? "写下你的评论…" : "登录后发表评论"}
             disabled={!viewerLoggedIn || posting}
             rows={3}
-            style={{
-              width: "100%", background: "var(--bg-input)", border: "1px solid var(--border)",
-              borderRadius: "8px", padding: "10px 12px", color: "var(--text-primary)",
-              fontSize: "0.875rem", resize: "vertical", outline: "none",
-              boxSizing: "border-box",
-            }}
+            className="w-full bg-[var(--bg-input)] border border-border rounded-lg py-2.5 px-3 text-text-primary text-sm resize-y outline-none box-border"
           />
-          {error && <p style={{ color: "var(--accent)", fontSize: "0.8125rem", marginTop: "4px" }}>{error}</p>}
-          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "8px" }}>
+          {error && <p className="text-accent text-[0.8125rem] mt-1">{error}</p>}
+          <div className="flex justify-end mt-2">
             <button
               onClick={postComment}
               disabled={posting || !body.trim()}
-              className="btn-primary"
-              style={{ padding: "7px 18px", fontSize: "0.875rem" }}
+              className="inline-flex items-center gap-1.5 rounded-md bg-accent py-[7px] px-[18px] text-sm font-semibold text-white border-none cursor-pointer transition-colors hover:bg-accent-hover disabled:opacity-50"
             >
               {posting ? "发送中…" : "发表"}
             </button>
@@ -353,10 +299,10 @@ export default function CommentsList({ videoId, initialComments, viewerLoggedIn,
 
       {/* Comment list */}
       {comments.length === 0 ? (
-        <p style={{ color: "var(--text-muted)", fontSize: "0.875rem", textAlign: "center", padding: "2rem 0" }}>暂无评论，来第一个留言吧</p>
+        <p className="text-text-muted text-sm text-center py-8">暂无评论，来第一个留言吧</p>
       ) : (
         comments.map((comment, idx) => (
-          <div key={comment.id} style={{ paddingBottom: "12px", marginBottom: idx < comments.length - 1 ? "4px" : 0 }}>
+          <div key={comment.id} className={`pb-3 ${idx < comments.length - 1 ? "mb-1" : ""}`}>
             <CommentRow
               comment={comment}
               videoId={videoId}

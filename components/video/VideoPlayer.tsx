@@ -67,33 +67,18 @@ export default function VideoPlayer({ video }: Props) {
 
   return (
     <div
-      className="video-player-shell"
+      className="video-player-shell relative bg-black rounded-[10px] overflow-hidden w-full max-h-[75vh] mx-auto"
       style={{
-        position: "relative",
-        background: "#000",
-        borderRadius: "10px",
-        overflow: "hidden",
-        width: "100%",
         maxWidth: maxWidthByRatio,
-        margin: "0 auto",
         aspectRatio: playerRatio,
-        maxHeight: "75vh",
       }}
     >
       {video.media.posterUrl ? (
         <div
           aria-hidden
+          className="absolute inset-0 bg-center bg-cover blur-[36px] saturate-[1.15] scale-[1.15] opacity-[0.78] pointer-events-none z-0"
           style={{
-            position: "absolute",
-            inset: 0,
             backgroundImage: `url(${video.media.posterUrl})`,
-            backgroundPosition: "center",
-            backgroundSize: "cover",
-            filter: "blur(36px) saturate(1.15)",
-            transform: "scale(1.15)",
-            opacity: 0.78,
-            pointerEvents: "none",
-            zIndex: 0,
           }}
         />
       ) : null}
@@ -103,7 +88,7 @@ export default function VideoPlayer({ video }: Props) {
         poster={video.media.posterUrl || undefined}
         preload="metadata"
         playsInline
-        style={{ width: "100%", height: "100%", objectFit: "contain", position: "relative", zIndex: 1, background: "transparent" }}
+        className="w-full h-full object-contain relative z-[1] bg-transparent"
       />
 
       <style jsx global>{`

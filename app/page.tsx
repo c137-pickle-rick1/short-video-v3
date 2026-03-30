@@ -44,55 +44,34 @@ export default async function HomePage({
   const totalPages = Math.ceil(total / PAGE_SIZE);
 
   return (
-    <div
-      style={{
-        maxWidth: "1400px",
-        margin: "0 auto",
-        padding: "1rem",
-      }}
-    >
+    <div className="max-w-[1400px] mx-auto p-4">
       {/* Error */}
       {error && (
-        <div
-          style={{
-            background: "#2d0a0a",
-            border: "1px solid #5c1414",
-            borderRadius: "8px",
-            padding: "1rem",
-            marginBottom: "1rem",
-            color: "#ff6b6b",
-            fontSize: "0.875rem",
-          }}
-        >
+        <div className="bg-[#2d0a0a] border border-[#5c1414] rounded-lg p-4 mb-4 text-[#ff6b6b] text-sm">
           ⚠️ 数据库未连接: {error}。请检查环境变量配置。
         </div>
       )}
 
       {/* Search indicator */}
       {searchQuery && (
-        <div style={{ marginBottom: "1rem", fontSize: "0.9rem", color: "var(--text-secondary)" }}>
-          搜索：<span style={{ color: "var(--text-primary)", fontWeight: 600 }}>{searchQuery}</span>
+        <div className="mb-4 text-[0.9rem] text-text-secondary">
+          搜索：<span className="text-text-primary font-semibold">{searchQuery}</span>
           {"  "}
-          <Link href="/" style={{ color: "var(--accent)", fontSize: "0.8rem" }}>清除</Link>
+          <Link href="/" className="text-accent text-[0.8rem]">清除</Link>
         </div>
       )}
 
       {/* Sort tabs */}
-      <div style={{ display: "flex", gap: "6px", marginBottom: "1.25rem", flexWrap: "wrap" }}>
+      <div className="flex gap-1.5 mb-5 flex-wrap">
         {SORT_OPTIONS.map((opt) => (
           <Link
             key={opt.key}
             href={`/?sort=${opt.key}${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ""}`}
-            style={{
-              padding: "5px 14px",
-              borderRadius: "18px",
-              fontSize: "0.8125rem",
-              fontWeight: sort === opt.key ? 600 : 400,
-              background: sort === opt.key ? "var(--accent)" : "var(--bg-card)",
-              color: sort === opt.key ? "#fff" : "var(--text-secondary)",
-              border: `1px solid ${sort === opt.key ? "var(--accent)" : "var(--border)"}`,
-              transition: "all 0.15s",
-            }}
+            className={`px-3.5 py-1 rounded-full text-[0.8125rem] border transition-all ${
+              sort === opt.key
+                ? "font-semibold bg-accent text-white border-accent"
+                : "font-normal bg-bg-card text-text-secondary border-border"
+            }`}
           >
             {opt.label}
           </Link>

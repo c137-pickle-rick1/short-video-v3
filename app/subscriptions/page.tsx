@@ -27,15 +27,15 @@ export default async function SubscriptionsPage() {
   const displayCreators = isFollowingEmpty ? recommendedCreators : followedCreators;
 
   return (
-    <div style={{ maxWidth: "900px", margin: "0 auto", padding: "1.25rem 1rem" }}>
+    <div className="max-w-[900px] mx-auto px-4 py-5">
       {error && (
-        <div style={{ background: "#2d0a0a", border: "1px solid #5c1414", borderRadius: "8px", padding: "1rem", color: "#ff6b6b", fontSize: "0.875rem", marginBottom: "1rem" }}>
+        <div className="bg-[#2d0a0a] border border-[#5c1414] rounded-lg p-4 text-[#ff6b6b] text-sm mb-4">
           ⚠️ {error}
         </div>
       )}
 
       {isFollowingEmpty && !error && (
-        <div style={{ marginBottom: "14px" }}>
+        <div className="mb-3.5">
           <EmptyState
             icon="✨"
             title="还没有关注"
@@ -44,70 +44,48 @@ export default async function SubscriptionsPage() {
         </div>
       )}
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: "12px" }}>
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-3">
         {displayCreators.map((creator, index) => (
           <div
             key={creator.userId}
-            className="creator-card"
-            style={{
-              background: "var(--bg-card)",
-              border: "1px solid var(--border)",
-              borderRadius: "10px",
-              padding: "16px",
-              position: "relative",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              textAlign: "center",
-              gap: "10px",
-            }}
+            className="creator-card relative flex flex-col items-center text-center gap-2.5 bg-bg-card border border-border rounded-[10px] p-4"
           >
             <Link
               href={creator.profileUrl}
               prefetch={true}
               aria-label={`查看 ${creator.name} 的主页`}
-              style={{ position: "absolute", inset: 0, borderRadius: "10px", zIndex: 2 }}
+              className="absolute inset-0 rounded-[10px] z-[2]"
             />
             <Image
-              className="creator-card-avatar"
+              className="creator-card-avatar rounded-full object-cover relative z-[1] pointer-events-none"
               src={creator.imageUrl}
               alt={creator.name}
               width={56}
               height={56}
               loading={index === 0 ? "eager" : "lazy"}
-              style={{ borderRadius: "50%", objectFit: "cover", position: "relative", zIndex: 1, pointerEvents: "none" }}
               unoptimized
             />
-            <div className="creator-card-meta" style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: "8px", pointerEvents: "none" }}>
-              <div className="creator-card-name" style={{ fontWeight: 600, fontSize: "0.9375rem", color: "var(--text-primary)" }}>
+            <div className="creator-card-meta relative z-[1] flex flex-col items-center gap-2 pointer-events-none">
+              <div className="creator-card-name font-semibold text-[0.9375rem] text-text-primary">
                 {creator.name}
               </div>
-              <div className="creator-card-stats" style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
-                <div style={{ fontSize: "0.8125rem", color: "var(--text-secondary)" }}>
+              <div className="creator-card-stats flex items-center gap-2 flex-wrap">
+                <div className="text-[0.8125rem] text-text-secondary">
                   {creator.totalVideos} 个视频
                 </div>
                 {viewerUserId && creator.isFollowing && creator.unreadCount > 0 && (
-                  <div
-                    style={{
-                      fontSize: "0.75rem",
-                      color: creator.unreadCount > 0 ? "var(--accent-orange)" : "var(--text-secondary)",
-                      background: creator.unreadCount > 0 ? "rgba(249, 115, 22, 0.12)" : "rgba(153, 153, 153, 0.08)",
-                      border: creator.unreadCount > 0 ? "1px solid rgba(249, 115, 22, 0.35)" : "1px solid rgba(153, 153, 153, 0.25)",
-                      borderRadius: "999px",
-                      padding: "2px 10px",
-                    }}
-                  >
+                  <div className="text-xs text-accent-orange bg-[rgba(249,115,22,0.12)] border border-[rgba(249,115,22,0.35)] rounded-full px-2.5 py-0.5">
                     {creator.unreadCount}个新视频
                   </div>
                 )}
               </div>
             </div>
-            <div className="creator-card-action" style={{ position: "relative", zIndex: 3 }}>
+            <div className="creator-card-action relative z-[3]">
               {viewerUserId && viewerUserId !== creator.userId && (
                 <ProfileFollowButton targetUserId={creator.userId} initialFollowing={creator.isFollowing} />
               )}
               {!viewerUserId && (
-                <Link href="/login" className="btn-primary" style={{ display: "inline-block", padding: "6px 16px", fontSize: "0.8125rem" }}>
+                <Link href="/login" className="inline-flex items-center gap-1.5 rounded-md bg-accent px-4 py-1.5 text-[0.8125rem] font-semibold text-white border-none cursor-pointer transition-colors hover:bg-accent-hover">
                   关注
                 </Link>
               )}

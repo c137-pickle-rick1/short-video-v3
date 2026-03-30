@@ -31,33 +31,20 @@ export default async function CategoryDetailPage({
   const totalPages = Math.ceil(total / PAGE_SIZE);
 
   return (
-    <div
-      style={{
-        maxWidth: "1400px",
-        margin: "0 auto",
-        padding: "1rem",
-      }}
-    >
-      <div style={{ marginBottom: "1.5rem" }}>
-        <h1
-          style={{
-            fontSize: "1.5rem",
-            fontWeight: 700,
-            color: "var(--text-primary)",
-            margin: 0,
-          }}
-        >
+    <div className="max-w-[1400px] mx-auto p-4">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-text-primary m-0">
           {categoryName}
         </h1>
         {total > 0 && (
-          <p style={{ margin: "4px 0 0", fontSize: "0.85rem", color: "var(--text-secondary)" }}>
+          <p className="mt-1 text-sm text-text-secondary">
             共 {total} 个视频
           </p>
         )}
       </div>
 
       {videos.length === 0 ? (
-        <p style={{ color: "var(--text-secondary)", textAlign: "center", padding: "3rem 0" }}>
+        <p className="text-text-secondary text-center py-12">
           暂无视频
         </p>
       ) : (

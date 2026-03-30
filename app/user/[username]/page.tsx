@@ -25,48 +25,38 @@ export default async function UserProfilePage({ params }: PageProps) {
   const isOwnProfile = viewerUserId === profile.userId;
 
   return (
-    <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "1.25rem 1rem" }}>
+    <div className="max-w-[1100px] mx-auto px-4 py-5">
       {/* Profile header */}
-      <div style={{
-        background: "var(--bg-card)",
-        border: "1px solid var(--border)",
-        borderRadius: "12px",
-        padding: "24px",
-        display: "flex",
-        alignItems: "flex-start",
-        gap: "20px",
-        flexWrap: "wrap",
-        marginBottom: "24px",
-      }}>
+      <div className="bg-bg-card border border-border rounded-xl p-6 flex items-start gap-5 flex-wrap mb-6">
         <Image
           src={profile.imageUrl}
           alt={profile.name}
           width={80}
           height={80}
-          style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }}
+          className="rounded-full object-cover shrink-0"
           unoptimized
         />
 
-        <div style={{ flex: 1, minWidth: "200px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap", marginBottom: "6px" }}>
-            <h1 style={{ fontSize: "1.25rem", fontWeight: 700 }}>{profile.name}</h1>
-            <span style={{ color: "var(--text-muted)", fontSize: "0.875rem" }}>{profile.handle}</span>
+        <div className="flex-1 min-w-[200px]">
+          <div className="flex items-center gap-3 flex-wrap mb-1.5">
+            <h1 className="text-xl font-bold">{profile.name}</h1>
+            <span className="text-text-muted text-sm">{profile.handle}</span>
           </div>
 
           {profile.bio && (
-            <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", lineHeight: 1.5, marginBottom: "12px" }}>
+            <p className="text-text-secondary text-sm leading-relaxed mb-3">
               {profile.bio}
             </p>
           )}
 
-          <div style={{ display: "flex", gap: "20px", fontSize: "0.875rem", color: "var(--text-secondary)", marginBottom: "12px" }}>
-            <span><strong style={{ color: "var(--text-primary)" }}>{profile.videoCount}</strong> 视频</span>
-            <span><strong style={{ color: "var(--text-primary)" }}>{profile.followerCount}</strong> 粉丝</span>
-            <span><strong style={{ color: "var(--text-primary)" }}>{profile.followingCount}</strong> 关注</span>
+          <div className="flex gap-5 text-sm text-text-secondary mb-3">
+            <span><strong className="text-text-primary">{profile.videoCount}</strong> 视频</span>
+            <span><strong className="text-text-primary">{profile.followerCount}</strong> 粉丝</span>
+            <span><strong className="text-text-primary">{profile.followingCount}</strong> 关注</span>
           </div>
 
           {isOwnProfile ? (
-            <Link href="/me" className="btn-secondary" style={{ display: "inline-block", padding: "6px 16px", fontSize: "0.875rem" }}>
+            <Link href="/me" className="inline-flex items-center gap-1.5 rounded-md border border-border-light bg-transparent px-4 py-1.5 text-sm font-medium text-text-secondary transition-all hover:border-text-muted hover:text-text-primary cursor-pointer">
               编辑资料
             </Link>
           ) : viewerUserId ? (
@@ -75,7 +65,7 @@ export default async function UserProfilePage({ params }: PageProps) {
               initialFollowing={profile.isFollowing}
             />
           ) : (
-            <Link href="/login" className="btn-primary" style={{ display: "inline-block", padding: "6px 16px", fontSize: "0.875rem" }}>
+            <Link href="/login" className="inline-flex items-center gap-1.5 rounded-md bg-accent px-4 py-1.5 text-sm font-semibold text-white border-none cursor-pointer transition-colors hover:bg-accent-hover">
               关注
             </Link>
           )}
@@ -83,7 +73,7 @@ export default async function UserProfilePage({ params }: PageProps) {
       </div>
 
       {/* Videos */}
-      <h2 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: "14px" }}>发布的视频</h2>
+      <h2 className="text-base font-bold mb-3.5">发布的视频</h2>
       <VideoGrid videos={profile.videos} emptyMessage="该用户暂无公开视频" />
     </div>
   );

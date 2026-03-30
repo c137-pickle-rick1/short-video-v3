@@ -36,18 +36,13 @@ export default function RankFollowButton({ targetUserId, initialFollowing, disab
     <button
       onClick={disabled ? undefined : toggle}
       disabled={loading || disabled}
-      style={{
-        padding: "6px 16px",
-        borderRadius: "18px",
-        fontSize: "0.8125rem",
-        fontWeight: 600,
-        background: disabled ? "transparent" : following ? "transparent" : "var(--accent)",
-        color: disabled ? "var(--text-muted)" : following ? "var(--text-secondary)" : "#fff",
-        border: `1px solid ${disabled ? "var(--border)" : following ? "var(--border)" : "var(--accent)"}`,
-        cursor: disabled ? "default" : loading ? "wait" : "pointer",
-        flexShrink: 0,
-        opacity: disabled ? 0.5 : 1,
-      }}
+      className={`py-1.5 px-4 rounded-[18px] text-[0.8125rem] font-semibold shrink-0 border ${
+        disabled
+          ? "bg-transparent text-text-muted border-border cursor-default opacity-50"
+          : following
+            ? "bg-transparent text-text-secondary border-border cursor-pointer"
+            : "bg-accent text-white border-accent cursor-pointer"
+      } ${loading ? "cursor-wait" : ""}`}
     >
       {disabled ? "关注" : following ? "已关注" : "关注"}
     </button>

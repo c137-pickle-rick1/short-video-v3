@@ -48,7 +48,7 @@ async function CommentsSection({
 async function RelatedVideosSection({ videoId }: { videoId: number }) {
   const relatedVideos = await getRelatedVideos(videoId, 8);
   return (
-    <div className="related-videos-grid">
+    <div className="grid grid-cols-2 lg:grid-cols-1 gap-2.5">
       {relatedVideos.map((v: VideoFeedItem) => (
         <VideoCard key={v.videoId} video={v} />
       ))}
@@ -89,15 +89,15 @@ export default async function VideoDetailPage({ params }: PageProps) {
       {/* Fire-and-forget view tracking */}
       <RecordView videoId={String(video.videoId)} />
 
-      <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "1.25rem 1rem" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "24px" }} className="video-detail-layout">
+      <div className="max-w-[1400px] mx-auto px-4 py-5">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
           {/* Left: player + info + comments */}
           <div>
             {/* Player */}
             <VideoPlayer video={video} />
 
             {/* Reactions: directly below video */}
-            <div style={{ marginTop: "12px", marginBottom: "20px" }}>
+            <div className="mt-3 mb-5">
               <VideoDetailReactions
                 videoId={video.videoId}
                 initialLikes={video.likeCount}
@@ -110,31 +110,19 @@ export default async function VideoDetailPage({ params }: PageProps) {
             {/* Title & meta */}
             <div>
               {/* 标题 + 分类/标签 作为一组 */}
-              <div style={{ marginBottom: "20px" }}>
-                <h1 style={{ fontSize: "1.5rem", fontWeight: 700, lineHeight: 1.4, marginBottom: "12px" }}>
+              <div className="mb-5">
+                <h1 className="text-2xl font-bold leading-[1.4] mb-3">
                   {video.displayText || "无标题"}
                 </h1>
 
                 {/* Categories & Tags */}
                 {(video.categories.length > 0 || video.tags.length > 0) && (
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                  <div className="flex flex-wrap gap-1.5">
                     {video.categories.map((cat) => (
                       <Link
                         key={cat.id}
                         href={`/categories/${cat.slug}`}
-                        style={{
-                          display: "inline-block",
-                          padding: "3px 10px",
-                          borderRadius: "6px",
-                          fontSize: "1rem",
-                          fontWeight: 500,
-                          background: "var(--bg-card)",
-                          color: "var(--text-secondary)",
-                          textDecoration: "none",
-                          lineHeight: 1.6,
-                          transition: "background 0.15s",
-                          border: "1px solid var(--border-light)",
-                        }}
+                        className="inline-block py-[3px] px-2.5 rounded-md text-base font-medium bg-bg-card text-text-secondary no-underline leading-[1.6] transition-colors border border-border-light hover:bg-bg-hover"
                       >
                         {cat.name}
                       </Link>
@@ -143,19 +131,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
                       <Link
                         key={tag.id}
                         href={`/tags/${tag.slug}`}
-                        style={{
-                          display: "inline-block",
-                          padding: "3px 10px",
-                          borderRadius: "6px",
-                          fontSize: "1rem",
-                          fontWeight: 500,
-                          background: "var(--bg-card)",
-                          color: "var(--text-secondary)",
-                          textDecoration: "none",
-                          lineHeight: 1.6,
-                          transition: "background 0.15s",
-                          border: "1px solid var(--border-light)",
-                        }}
+                        className="inline-block py-[3px] px-2.5 rounded-md text-base font-medium bg-bg-card text-text-secondary no-underline leading-[1.6] transition-colors border border-border-light hover:bg-bg-hover"
                       >
                         {tag.name}
                       </Link>
@@ -165,19 +141,19 @@ export default async function VideoDetailPage({ params }: PageProps) {
               </div>
 
               {/* 作者信息 作为独立区块 */}
-              <div style={{ display: "flex", alignItems: "center", gap: "10px", paddingTop: "16px", paddingBottom: "16px", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", marginBottom: "24px" }}>
-                <Link href={video.author.profileUrl} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <div className="flex items-center gap-2.5 py-4 border-t border-b border-border mb-6">
+                <Link href={video.author.profileUrl} className="flex items-center gap-2.5">
                   <Image
                     src={video.author.imageUrl}
                     alt={video.author.name}
                     width={46}
                     height={46}
-                    style={{ borderRadius: "50%", objectFit: "cover", width: 46, height: 46, flexShrink: 0 }}
+                    className="rounded-full object-cover w-[46px] h-[46px] shrink-0"
                     unoptimized
                   />
                   <div>
-                    <div style={{ fontWeight: 600, fontSize: "1rem", color: "var(--text-primary)" }}>{video.author.name}</div>
-                    <div style={{ fontSize: "0.8125rem", color: "var(--text-muted)" }}>{video.postedAtText}</div>
+                    <div className="font-semibold text-base text-text-primary">{video.author.name}</div>
+                    <div className="text-[0.8125rem] text-text-muted">{video.postedAtText}</div>
                   </div>
                 </Link>
 
@@ -191,7 +167,7 @@ export default async function VideoDetailPage({ params }: PageProps) {
 
               {/* Comments */}
               <Suspense fallback={
-                <div style={{ color: "var(--text-muted)", fontSize: "0.875rem", padding: "16px 0" }}>加载评论中…</div>
+                <div className="text-text-muted text-sm py-4">加载评论中…</div>
               }>
                 <CommentsSection
                   videoId={video.videoId}
@@ -206,15 +182,15 @@ export default async function VideoDetailPage({ params }: PageProps) {
 
           {/* Right: related videos */}
           <aside>
-            <h3 style={{ fontSize: "0.9375rem", fontWeight: 700, marginBottom: "12px" }}>相关视频</h3>
+            <h3 className="text-[0.9375rem] font-bold mb-3">相关视频</h3>
             <Suspense fallback={
-              <div className="related-videos-grid">
+              <div className="grid grid-cols-2 lg:grid-cols-1 gap-2.5">
                 {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} style={{ background: "var(--bg-card)", borderRadius: "8px", overflow: "hidden", opacity: 0.6 }}>
-                    <div style={{ paddingBottom: "100%", background: "var(--bg-hover)" }} />
-                    <div style={{ padding: "8px" }}>
-                      <div style={{ height: "14px", background: "var(--bg-hover)", borderRadius: "4px", marginBottom: "6px" }} />
-                      <div style={{ height: "12px", width: "60%", background: "var(--bg-hover)", borderRadius: "4px" }} />
+                  <div key={i} className="bg-bg-card rounded-lg overflow-hidden opacity-60">
+                    <div className="pb-[100%] bg-bg-hover" />
+                    <div className="p-2">
+                      <div className="h-3.5 bg-bg-hover rounded mb-1.5" />
+                      <div className="h-3 w-3/5 bg-bg-hover rounded" />
                     </div>
                   </div>
                 ))}
@@ -225,22 +201,6 @@ export default async function VideoDetailPage({ params }: PageProps) {
           </aside>
         </div>
       </div>
-
-      <style>{`
-        .related-videos-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 10px;
-        }
-        @media (min-width: 1024px) {
-          .video-detail-layout {
-            grid-template-columns: 1fr 340px !important;
-          }
-          .related-videos-grid {
-            grid-template-columns: 1fr;
-          }
-        }
-      `}</style>
     </>
   );
 }

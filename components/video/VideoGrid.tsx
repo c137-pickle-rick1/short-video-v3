@@ -10,40 +10,17 @@ interface VideoGridProps {
 export default function VideoGrid({ videos, showAuthor = true, emptyMessage = "暂无视频" }: VideoGridProps) {
   if (videos.length === 0) {
     return (
-      <div
-        style={{
-          textAlign: "center",
-          padding: "4rem 0",
-          color: "var(--text-muted)",
-          fontSize: "1rem",
-        }}
-      >
+      <div className="text-center py-16 text-text-muted text-base">
         {emptyMessage}
       </div>
     );
   }
 
   return (
-    <div
-      style={{
-        display: "grid",
-        gap: "12px",
-      }}
-      className="video-grid"
-    >
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
       {videos.map((video, index) => (
         <VideoCard key={video.videoId} video={video} showAuthor={showAuthor} eagerPoster={index === 0} />
       ))}
-
-      <style>{`
-        .video-grid { grid-template-columns: repeat(2, 1fr); }
-        @media (min-width: 640px) {
-          .video-grid { grid-template-columns: repeat(3, 1fr); }
-        }
-        @media (min-width: 1024px) {
-          .video-grid { grid-template-columns: repeat(4, 1fr); }
-        }
-      `}</style>
     </div>
   );
 }

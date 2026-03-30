@@ -1,56 +1,45 @@
 import type React from "react";
 
 export default function VideoDetailLoading() {
-  const S = {
-    block: (w: string, h: string | number, extra?: React.CSSProperties): React.CSSProperties => ({
-      width: w, height: h, background: "var(--bg-card)", borderRadius: "6px",
-      animation: "pulse 1.5s ease-in-out infinite", flexShrink: 0, ...extra,
-    }),
-  };
-
   return (
-    <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "1.25rem 1rem" }}>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "24px" }} className="video-detail-layout">
+    <div className="max-w-[1400px] mx-auto px-4 py-5">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
 
         {/* ── Left column ── */}
         <div>
           {/* Player — same container/border-radius as VideoPlayer */}
-          <div style={{
-            position: "relative", background: "#000", borderRadius: "10px",
-            overflow: "hidden", maxHeight: "75vh", paddingBottom: "56.25%",
-            animation: "pulse 1.5s ease-in-out infinite",
-          }} />
+          <div className="relative bg-black rounded-[10px] overflow-hidden max-h-[75vh] pb-[56.25%] animate-pulse" />
 
           {/* Reaction buttons just below player */}
-          <div style={{ display: "flex", gap: "8px", marginTop: "12px", marginBottom: "12px", flexWrap: "wrap", justifyContent: "center" }}>
-            <div style={S.block("92px", 34, { borderRadius: "7px" })} />
-            <div style={S.block("92px", 34, { borderRadius: "7px" })} />
+          <div className="flex gap-2 mt-3 mb-3 flex-wrap justify-center">
+            <div className="w-[92px] h-[34px] bg-bg-card rounded-[7px] animate-pulse" />
+            <div className="w-[92px] h-[34px] bg-bg-card rounded-[7px] animate-pulse" />
           </div>
 
           {/* Title + author row */}
-          <div style={{ marginTop: "14px" }}>
+          <div className="mt-3.5">
             {/* h1 title */}
-            <div style={S.block("55%", 20, { marginBottom: "10px" })} />
+            <div className="w-[55%] h-5 bg-bg-card rounded-md mb-2.5 animate-pulse" />
 
             {/* Author row */}
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "10px", marginBottom: "16px" }}>
+            <div className="flex items-center justify-between flex-wrap gap-2.5 mb-4">
               {/* Author: avatar + name + date */}
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <div style={S.block("34px", 34, { borderRadius: "50%" })} />
+              <div className="flex items-center gap-2">
+                <div className="w-[34px] h-[34px] bg-bg-card rounded-full shrink-0 animate-pulse" />
                 <div>
-                  <div style={S.block("90px", 13, { marginBottom: "6px" })} />
-                  <div style={S.block("55px", 11)} />
+                  <div className="w-[90px] h-[13px] bg-bg-card rounded-md mb-1.5 animate-pulse" />
+                  <div className="w-[55px] h-[11px] bg-bg-card rounded-md animate-pulse" />
                 </div>
               </div>
-              <div style={S.block("94px", 34, { borderRadius: "18px" })} />
+              <div className="w-[94px] h-[34px] bg-bg-card rounded-[18px] shrink-0 animate-pulse" />
             </div>
 
             {/* Comments heading */}
-            <div style={S.block("100px", 16, { marginBottom: "16px" })} />
+            <div className="w-[100px] h-4 bg-bg-card rounded-md mb-4 animate-pulse" />
             {/* Comment input row */}
-            <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
-              <div style={S.block("32px", 32, { borderRadius: "50%" })} />
-              <div style={{ ...S.block("100%", 36, { borderRadius: "8px" }), flex: 1 }} />
+            <div className="flex gap-2.5 mb-5">
+              <div className="w-8 h-8 bg-bg-card rounded-full shrink-0 animate-pulse" />
+              <div className="flex-1 h-9 bg-bg-card rounded-lg animate-pulse" />
             </div>
           </div>
         </div>
@@ -58,21 +47,21 @@ export default function VideoDetailLoading() {
         {/* ── Right column: related videos ── */}
         <aside>
           {/* Heading */}
-          <div style={S.block("80px", 16, { marginBottom: "12px" })} />
+          <div className="w-20 h-4 bg-bg-card rounded-md mb-3 animate-pulse" />
           {/* VideoCards — square thumb + title + author row */}
-          <div className="related-videos-grid">
+          <div className="grid grid-cols-2 lg:grid-cols-1 gap-2.5">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} style={{ background: "var(--bg-card)", borderRadius: "8px", overflow: "hidden", border: "1px solid var(--border)" }}>
+              <div key={i} className="bg-bg-card rounded-lg overflow-hidden border border-border">
                 {/* Square thumbnail */}
-                <div style={{ paddingBottom: "100%", background: "var(--bg-secondary)", animation: "pulse 1.5s ease-in-out infinite" }} />
+                <div className="pb-[100%] bg-bg-secondary animate-pulse" />
                 {/* Info */}
-                <div style={{ padding: "10px 12px 12px" }}>
-                  <div style={S.block("90%", 14, { marginBottom: "8px" })} />
-                  <div style={S.block("60%", 14)} />
+                <div className="px-3 pt-2.5 pb-3">
+                  <div className="w-[90%] h-3.5 bg-bg-card rounded mb-2 animate-pulse" />
+                  <div className="w-3/5 h-3.5 bg-bg-card rounded animate-pulse" />
                   {/* Author row */}
-                  <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "8px" }}>
-                    <div style={S.block("18px", 18, { borderRadius: "50%" })} />
-                    <div style={S.block("60px", 12)} />
+                  <div className="flex items-center gap-1.5 mt-2">
+                    <div className="w-[18px] h-[18px] bg-bg-card rounded-full shrink-0 animate-pulse" />
+                    <div className="w-[60px] h-3 bg-bg-card rounded animate-pulse" />
                   </div>
                 </div>
               </div>
@@ -80,26 +69,6 @@ export default function VideoDetailLoading() {
           </div>
         </aside>
       </div>
-
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.45; }
-        }
-        .related-videos-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 10px;
-        }
-        @media (min-width: 1024px) {
-          .video-detail-layout {
-            grid-template-columns: 1fr 340px !important;
-          }
-          .related-videos-grid {
-            grid-template-columns: 1fr;
-          }
-        }
-      `}</style>
     </div>
   );
 }

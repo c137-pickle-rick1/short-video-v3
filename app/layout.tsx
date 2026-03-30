@@ -15,31 +15,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN" style={{ colorScheme: "dark" }}>
-      <body
-        style={{
-          minHeight: "100dvh",
-          display: "flex",
-          flexDirection: "column",
-          background: "var(--bg-primary)",
-          color: "var(--text-primary)",
-          paddingBottom: "env(safe-area-inset-bottom)",
-        }}
-      >
+    <html lang="zh-CN" className="dark">
+      <body className="min-h-dvh flex flex-col bg-bg-primary text-text-primary pb-[env(safe-area-inset-bottom)]">
         <Suspense fallback={null}>
           <Header />
         </Suspense>
-        <main style={{ flex: 1 }}>
+        <main className="flex-1 max-sm:pb-16">
           {children}
         </main>
         <Suspense fallback={null}>
           <MobileNav />
         </Suspense>
-        <style>{`
-          @media (max-width: 640px) {
-            main { padding-bottom: 64px; }
-          }
-        `}</style>
       </body>
     </html>
   );

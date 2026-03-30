@@ -63,66 +63,66 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div style={{ minHeight: "80vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
-      <div style={{ width: "100%", maxWidth: "400px", background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: "12px", padding: "2rem" }}>
-        <h1 style={{ fontSize: "1.5rem", fontWeight: 700, marginBottom: "1.5rem" }}>找回密码</h1>
+    <div className="min-h-[80vh] flex items-center justify-center p-4">
+      <div className="w-full max-w-[400px] bg-bg-card border border-border rounded-xl p-8">
+        <h1 className="text-2xl font-bold mb-6">找回密码</h1>
 
         {error && (
-          <div style={{ background: "#2d0a0a", border: "1px solid #5c1414", borderRadius: "6px", padding: "0.75rem", marginBottom: "1rem", color: "#ff6b6b", fontSize: "0.875rem" }}>
+          <div className="bg-[#2d0a0a] border border-[#5c1414] rounded-md p-3 mb-4 text-[#ff6b6b] text-sm">
             {error}
           </div>
         )}
 
         {debugCode && (
-          <div style={{ background: "#0a2d0a", border: "1px solid #145c14", borderRadius: "6px", padding: "0.75rem", marginBottom: "1rem", color: "#6bff6b", fontSize: "0.875rem" }}>
+          <div className="bg-[#0a2d0a] border border-[#145c14] rounded-md p-3 mb-4 text-[#6bff6b] text-sm">
             [DEV] 验证码: <strong>{debugCode}</strong>
           </div>
         )}
 
         {step === "done" ? (
-          <div style={{ textAlign: "center" }}>
-            <p style={{ color: "var(--text-secondary)", marginBottom: "1rem" }}>密码重置成功！</p>
-            <Link href="/login" className="btn-primary" style={{ display: "inline-flex", justifyContent: "center" }}>
+          <div className="text-center">
+            <p className="text-text-secondary mb-4">密码重置成功！</p>
+            <Link href="/login" className="inline-flex justify-center items-center gap-1.5 rounded-md bg-accent px-5 py-2 font-semibold text-white transition-colors hover:bg-accent-hover">
               立即登录
             </Link>
           </div>
         ) : step === "email" ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <div className="flex flex-col gap-4">
             <div>
-              <label style={{ display: "block", fontSize: "0.875rem", color: "var(--text-secondary)", marginBottom: "6px" }}>注册邮箱</label>
+              <label className="block text-sm text-text-secondary mb-1.5">注册邮箱</label>
               <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" />
             </div>
-            <button className="btn-primary" onClick={handleSendCode} disabled={sendingCode} style={{ width: "100%", justifyContent: "center", padding: "0.625rem", fontSize: "1rem" }}>
+            <button className="w-full inline-flex items-center justify-center gap-1.5 rounded-md bg-accent px-5 py-2.5 text-base font-semibold text-white border-none cursor-pointer transition-colors hover:bg-accent-hover disabled:opacity-70" onClick={handleSendCode} disabled={sendingCode}>
               {sendingCode ? "发送中..." : "发送验证码"}
             </button>
           </div>
         ) : (
-          <form onSubmit={handleReset} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <form onSubmit={handleReset} className="flex flex-col gap-4">
             <div>
-              <label style={{ display: "block", fontSize: "0.875rem", color: "var(--text-secondary)", marginBottom: "6px" }}>验证码</label>
-              <div style={{ display: "flex", gap: "8px" }}>
-                <input type="text" value={code} onChange={(e) => setCode(e.target.value)} placeholder="6位验证码" maxLength={6} style={{ flex: 1 }} />
-                <button type="button" className="btn-secondary" onClick={handleSendCode} disabled={cooldown > 0} style={{ flexShrink: 0, padding: "6px 12px", fontSize: "0.8125rem" }}>
+              <label className="block text-sm text-text-secondary mb-1.5">验证码</label>
+              <div className="flex gap-2">
+                <input type="text" value={code} onChange={(e) => setCode(e.target.value)} placeholder="6位验证码" maxLength={6} className="flex-1" />
+                <button type="button" className="shrink-0 inline-flex items-center gap-1.5 rounded-md border border-border-light bg-transparent px-3 py-1.5 text-[0.8125rem] font-medium text-text-secondary cursor-pointer transition-all hover:border-text-muted hover:text-text-primary disabled:opacity-50" onClick={handleSendCode} disabled={cooldown > 0}>
                   {cooldown > 0 ? `${cooldown}s` : "重发"}
                 </button>
               </div>
             </div>
             <div>
-              <label style={{ display: "block", fontSize: "0.875rem", color: "var(--text-secondary)", marginBottom: "6px" }}>新密码</label>
+              <label className="block text-sm text-text-secondary mb-1.5">新密码</label>
               <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="至少8位" />
             </div>
             <div>
-              <label style={{ display: "block", fontSize: "0.875rem", color: "var(--text-secondary)", marginBottom: "6px" }}>确认新密码</label>
+              <label className="block text-sm text-text-secondary mb-1.5">确认新密码</label>
               <input type="password" value={passwordConfirmation} onChange={(e) => setPasswordConfirmation(e.target.value)} placeholder="再次输入密码" />
             </div>
-            <button type="submit" className="btn-primary" disabled={loading} style={{ width: "100%", justifyContent: "center", padding: "0.625rem", fontSize: "1rem" }}>
+            <button type="submit" className="w-full inline-flex items-center justify-center gap-1.5 rounded-md bg-accent px-5 py-2.5 text-base font-semibold text-white border-none cursor-pointer transition-colors hover:bg-accent-hover disabled:opacity-70" disabled={loading}>
               {loading ? "重置中..." : "重置密码"}
             </button>
           </form>
         )}
 
-        <p style={{ marginTop: "1.25rem", textAlign: "center", fontSize: "0.875rem", color: "var(--text-secondary)" }}>
-          <Link href="/login" style={{ color: "var(--accent)" }}>返回登录</Link>
+        <p className="mt-5 text-center text-sm text-text-secondary">
+          <Link href="/login" className="text-accent">返回登录</Link>
         </p>
       </div>
     </div>

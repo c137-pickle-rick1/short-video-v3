@@ -26,20 +26,17 @@ export default async function MePage() {
     || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(profile.name ?? profile.username ?? "U")}&backgroundColor=e5192a&textColor=ffffff`;
 
   const profileCard = (
-    <div style={{
-      background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: "12px",
-      padding: "24px", display: "flex", alignItems: "center", gap: "20px", marginBottom: "24px", flexWrap: "wrap",
-    }}>
+    <div className="bg-bg-card border border-border rounded-xl p-6 flex items-center gap-5 mb-6 flex-wrap">
       <Image src={avatarUrl} alt={profile.name ?? "我"} width={64} height={64}
-        style={{ borderRadius: "50%", objectFit: "cover" }} unoptimized />
+        className="rounded-full object-cover" unoptimized />
       <div>
-        <div style={{ fontSize: "1.125rem", fontWeight: 700 }}>{profile.name || profile.username || "用户"}</div>
-        <div style={{ marginTop: "8px", display: "flex", alignItems: "center", gap: "14px", flexWrap: "wrap" }}>
-          <span style={{ fontSize: "0.8125rem", color: "var(--text-secondary)" }}>
-            关注 <strong style={{ color: "var(--text-primary)" }}>{stats.followingCount}</strong>
+        <div className="text-lg font-bold">{profile.name || profile.username || "用户"}</div>
+        <div className="mt-2 flex items-center gap-3.5 flex-wrap">
+          <span className="text-[0.8125rem] text-text-secondary">
+            关注 <strong className="text-text-primary">{stats.followingCount}</strong>
           </span>
-          <span style={{ fontSize: "0.8125rem", color: "var(--text-secondary)" }}>
-            粉丝 <strong style={{ color: "var(--text-primary)" }}>{stats.followerCount}</strong>
+          <span className="text-[0.8125rem] text-text-secondary">
+            粉丝 <strong className="text-text-primary">{stats.followerCount}</strong>
           </span>
         </div>
       </div>
@@ -47,14 +44,14 @@ export default async function MePage() {
   );
 
   return (
-    <div style={{ maxWidth: "800px", margin: "0 auto", padding: "1.25rem 1rem" }}>
-      <h1 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "1.5rem" }}>个人中心</h1>
+    <div className="max-w-[800px] mx-auto px-4 py-5">
+      <h1 className="text-xl font-bold mb-6">个人中心</h1>
 
       {/* Profile card */}
       {profile.username ? (
         <Link
           href={`/user/${profile.username}`}
-          style={{ display: "block", color: "inherit", textDecoration: "none" }}
+          className="block text-inherit no-underline"
           aria-label="打开公开个人主页"
         >
           {profileCard}
@@ -62,27 +59,27 @@ export default async function MePage() {
       ) : profileCard}
 
       {/* Quick links */}
-      <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginBottom: "28px" }}>
+      <div className="flex gap-2.5 flex-wrap mb-7">
         {[
           { href: "/me/creator", label: "创作者中心" },
           { href: "/me/history", label: "观看历史" },
           { href: "/me/bookmarks", label: "我的收藏" },
         ].map((link) => (
-          <Link key={link.href} href={link.href} className="btn-secondary"
-            style={{ padding: "8px 16px", fontSize: "0.875rem" }}>
+          <Link key={link.href} href={link.href}
+            className="inline-flex items-center gap-1.5 rounded-md border border-border-light bg-transparent px-4 py-2 text-sm font-medium text-text-secondary transition-all hover:border-text-muted hover:text-text-primary cursor-pointer">
             {link.label}
           </Link>
         ))}
       </div>
 
       {/* Profile editor */}
-      <div style={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: "12px", padding: "24px", marginBottom: "24px" }}>
-        <h2 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: "16px" }}>修改资料</h2>
+      <div className="bg-bg-card border border-border rounded-xl p-6 mb-6">
+        <h2 className="text-base font-bold mb-4">修改资料</h2>
         <ProfileEditorForm name={profile.name} bio={profile.bio} username={profile.username} email={profile.email} avatarUrl={profile.avatarUrl} />
       </div>
 
       {/* Logout */}
-      <div style={{ marginTop: "8px", marginBottom: "32px" }}>
+      <div className="mt-2 mb-8">
         <LogoutButton />
       </div>
     </div>

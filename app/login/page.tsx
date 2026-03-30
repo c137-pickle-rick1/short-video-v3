@@ -43,55 +43,21 @@ function LoginForm() {
   }
 
   return (
-    <div
-      style={{
-        minHeight: "80vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "1rem",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          maxWidth: "400px",
-          background: "var(--bg-card)",
-          border: "1px solid var(--border)",
-          borderRadius: "12px",
-          padding: "2rem",
-        }}
-      >
-        <h1
-          style={{
-            fontSize: "1.5rem",
-            fontWeight: 700,
-            marginBottom: "1.5rem",
-            color: "var(--text-primary)",
-          }}
-        >
+    <div className="min-h-[80vh] flex items-center justify-center p-4">
+      <div className="w-full max-w-[400px] bg-bg-card border border-border rounded-xl p-8">
+        <h1 className="text-2xl font-bold mb-6 text-text-primary">
           登录
         </h1>
 
         {error && (
-          <div
-            style={{
-              background: "#2d0a0a",
-              border: "1px solid #5c1414",
-              borderRadius: "6px",
-              padding: "0.75rem",
-              marginBottom: "1rem",
-              color: "#ff6b6b",
-              fontSize: "0.875rem",
-            }}
-          >
+          <div className="bg-[#2d0a0a] border border-[#5c1414] rounded-md p-3 mb-4 text-[#ff6b6b] text-sm">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
-            <label style={{ display: "block", fontSize: "0.875rem", color: "var(--text-secondary)", marginBottom: "6px" }}>
+            <label className="block text-sm text-text-secondary mb-1.5">
               邮箱
             </label>
             <input
@@ -105,7 +71,7 @@ function LoginForm() {
           </div>
 
           <div>
-            <label style={{ display: "block", fontSize: "0.875rem", color: "var(--text-secondary)", marginBottom: "6px" }}>
+            <label className="block text-sm text-text-secondary mb-1.5">
               密码
             </label>
             <input
@@ -118,10 +84,10 @@ function LoginForm() {
             />
           </div>
 
-          <div style={{ textAlign: "right" }}>
+          <div className="text-right">
             <Link
               href="/forgot-password"
-              style={{ fontSize: "0.8125rem", color: "var(--accent)", textDecoration: "none" }}
+              className="text-[0.8125rem] text-accent"
             >
               忘记密码？
             </Link>
@@ -129,17 +95,16 @@ function LoginForm() {
 
           <button
             type="submit"
-            className="btn-primary"
+            className="w-full inline-flex items-center justify-center gap-1.5 rounded-md bg-accent px-5 py-2.5 text-base font-semibold text-white border-none cursor-pointer transition-colors hover:bg-accent-hover disabled:opacity-70"
             disabled={loading}
-            style={{ width: "100%", justifyContent: "center", padding: "0.625rem", fontSize: "1rem", opacity: loading ? 0.7 : 1 }}
           >
             {loading ? "登录中..." : "登录"}
           </button>
         </form>
 
-        <p style={{ marginTop: "1.25rem", textAlign: "center", fontSize: "0.875rem", color: "var(--text-secondary)" }}>
+        <p className="mt-5 text-center text-sm text-text-secondary">
           还没有账号？{" "}
-          <Link href="/register" style={{ color: "var(--accent)" }}>
+          <Link href="/register" className="text-accent">
             立即注册
           </Link>
         </p>

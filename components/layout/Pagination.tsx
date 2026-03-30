@@ -30,56 +30,22 @@ export default function Pagination({ currentPage, totalPages, basePath, extraPar
     }
   }
 
-  const btnBase: React.CSSProperties = {
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    minWidth: "36px",
-    height: "36px",
-    padding: "0 10px",
-    borderRadius: "6px",
-    fontSize: "0.875rem",
-    fontWeight: 500,
-    border: "1px solid var(--border)",
-    color: "var(--text-secondary)",
-    background: "var(--bg-card)",
-    transition: "all 0.15s",
-    textDecoration: "none",
-  };
-
-  const btnActive: React.CSSProperties = {
-    ...btnBase,
-    background: "var(--accent)",
-    borderColor: "var(--accent)",
-    color: "#fff",
-    fontWeight: 700,
-  };
-
-  const btnDisabled: React.CSSProperties = {
-    ...btnBase,
-    opacity: 0.3,
-    pointerEvents: "none",
-  };
+  const btnBase = "inline-flex items-center justify-center min-w-9 h-9 px-2.5 rounded-md text-sm font-medium border border-border text-text-secondary bg-bg-card transition-all no-underline";
+  const btnActive = "inline-flex items-center justify-center min-w-9 h-9 px-2.5 rounded-md text-sm font-bold border border-accent text-white bg-accent no-underline";
+  const btnDisabled = "inline-flex items-center justify-center min-w-9 h-9 px-2.5 rounded-md text-sm font-medium border border-border text-text-secondary bg-bg-card opacity-30 pointer-events-none";
 
   return (
     <nav
       aria-label="分页"
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: "6px",
-        padding: "2rem 0 1rem",
-        flexWrap: "wrap",
-      }}
+      className="flex items-center justify-center gap-1.5 pt-8 pb-4 flex-wrap"
     >
       {/* Prev */}
       {currentPage <= 1 ? (
-        <span style={btnDisabled}>
+        <span className={btnDisabled}>
           <CaretLeft size={14} weight="bold" />
         </span>
       ) : (
-        <Link href={buildHref(basePath, currentPage - 1, extraParams)} style={btnBase}>
+        <Link href={buildHref(basePath, currentPage - 1, extraParams)} className={btnBase}>
           <CaretLeft size={14} weight="bold" />
         </Link>
       )}
@@ -87,11 +53,11 @@ export default function Pagination({ currentPage, totalPages, basePath, extraPar
       {/* Page numbers */}
       {pages.map((p, i) =>
         p === "..." ? (
-          <span key={`ellipsis-${i}`} style={{ ...btnBase, border: "none", background: "transparent", pointerEvents: "none" }}>
+          <span key={`ellipsis-${i}`} className="inline-flex items-center justify-center min-w-9 h-9 px-2.5 text-sm font-medium text-text-secondary pointer-events-none">
             …
           </span>
         ) : (
-          <Link key={p} href={buildHref(basePath, p, extraParams)} style={p === currentPage ? btnActive : btnBase}>
+          <Link key={p} href={buildHref(basePath, p, extraParams)} className={p === currentPage ? btnActive : btnBase}>
             {p}
           </Link>
         )
@@ -99,11 +65,11 @@ export default function Pagination({ currentPage, totalPages, basePath, extraPar
 
       {/* Next */}
       {currentPage >= totalPages ? (
-        <span style={btnDisabled}>
+        <span className={btnDisabled}>
           <CaretRight size={14} weight="bold" />
         </span>
       ) : (
-        <Link href={buildHref(basePath, currentPage + 1, extraParams)} style={btnBase}>
+        <Link href={buildHref(basePath, currentPage + 1, extraParams)} className={btnBase}>
           <CaretRight size={14} weight="bold" />
         </Link>
       )}

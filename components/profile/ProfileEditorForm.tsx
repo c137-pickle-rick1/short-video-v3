@@ -68,62 +68,54 @@ export default function ProfileEditorForm({ name, bio, username, email, avatarUr
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "14px", width: "100%" }}>
+    <div className="flex flex-col gap-3.5 w-full">
       <div>
-        <label style={{ display: "block", fontSize: "0.8125rem", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "6px" }}>
+        <label className="block text-[0.8125rem] font-semibold text-text-secondary mb-1.5">
           头像
         </label>
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <div style={{ width: "56px", height: "56px", minWidth: "56px", minHeight: "56px", flexShrink: 0, borderRadius: "50%", overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg-secondary)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div className="flex items-center gap-3">
+          <div className="w-14 h-14 min-w-14 min-h-14 shrink-0 rounded-full overflow-hidden border border-border bg-bg-secondary flex items-center justify-center">
             {avatarPreview ? (
-              <Image src={avatarPreview} alt="头像预览" width={56} height={56} style={{ width: "100%", height: "100%", objectFit: "cover" }} unoptimized />
+              <Image src={avatarPreview} alt="头像预览" width={56} height={56} className="w-full h-full object-cover" unoptimized />
             ) : (
-              <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>无头像</span>
+              <span className="text-xs text-text-muted">无头像</span>
             )}
           </div>
           <input
             type="file"
             accept="image/jpeg,image/png,image/webp"
             onChange={onAvatarChange}
-            style={{ fontSize: "0.8125rem", color: "var(--text-secondary)" }}
+            className="text-[0.8125rem] text-text-secondary"
           />
         </div>
       </div>
 
       <div>
-        <label style={{ display: "block", fontSize: "0.8125rem", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "6px" }}>
+        <label className="block text-[0.8125rem] font-semibold text-text-secondary mb-1.5">
           用户名
         </label>
         <input
           type="text"
           value={username ?? ""}
           disabled
-          style={{
-            width: "100%", background: "var(--bg-secondary)", border: "1px solid var(--border)",
-            borderRadius: "8px", padding: "9px 12px", color: "var(--text-muted)",
-            fontSize: "0.875rem", cursor: "not-allowed", boxSizing: "border-box",
-          }}
+          className="w-full bg-bg-secondary border border-border rounded-lg px-3 py-[9px] text-text-muted text-sm cursor-not-allowed box-border"
         />
       </div>
 
       <div>
-        <label style={{ display: "block", fontSize: "0.8125rem", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "6px" }}>
+        <label className="block text-[0.8125rem] font-semibold text-text-secondary mb-1.5">
           邮箱
         </label>
         <input
           type="email"
           value={email ?? ""}
           disabled
-          style={{
-            width: "100%", background: "var(--bg-secondary)", border: "1px solid var(--border)",
-            borderRadius: "8px", padding: "9px 12px", color: "var(--text-muted)",
-            fontSize: "0.875rem", cursor: "not-allowed", boxSizing: "border-box",
-          }}
+          className="w-full bg-bg-secondary border border-border rounded-lg px-3 py-[9px] text-text-muted text-sm cursor-not-allowed box-border"
         />
       </div>
 
       <div>
-        <label style={{ display: "block", fontSize: "0.8125rem", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "6px" }}>
+        <label className="block text-[0.8125rem] font-semibold text-text-secondary mb-1.5">
           昵称
         </label>
         <input
@@ -132,16 +124,12 @@ export default function ProfileEditorForm({ name, bio, username, email, avatarUr
           onChange={(e) => setDisplayName(e.target.value)}
           maxLength={50}
           placeholder="你的名字"
-          style={{
-            width: "100%", background: "var(--bg-input)", border: "1px solid var(--border)",
-            borderRadius: "8px", padding: "9px 12px", color: "var(--text-primary)",
-            fontSize: "0.875rem", outline: "none", boxSizing: "border-box",
-          }}
+          className="w-full bg-[var(--bg-input)] border border-border rounded-lg px-3 py-[9px] text-text-primary text-sm outline-none box-border"
         />
       </div>
 
       <div>
-        <label style={{ display: "block", fontSize: "0.8125rem", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "6px" }}>
+        <label className="block text-[0.8125rem] font-semibold text-text-secondary mb-1.5">
           简介
         </label>
         <textarea
@@ -150,22 +138,17 @@ export default function ProfileEditorForm({ name, bio, username, email, avatarUr
           maxLength={200}
           rows={4}
           placeholder="介绍一下自己…"
-          style={{
-            width: "100%", background: "var(--bg-input)", border: "1px solid var(--border)",
-            borderRadius: "8px", padding: "9px 12px", color: "var(--text-primary)",
-            fontSize: "0.875rem", resize: "vertical", outline: "none", boxSizing: "border-box",
-          }}
+          className="w-full bg-[var(--bg-input)] border border-border rounded-lg px-3 py-[9px] text-text-primary text-sm resize-y outline-none box-border"
         />
       </div>
 
-      {error && <p style={{ color: "var(--accent)", fontSize: "0.875rem" }}>{error}</p>}
-      {message && <p style={{ color: "#4caf50", fontSize: "0.875rem" }}>{message}</p>}
+      {error && <p className="text-accent text-sm">{error}</p>}
+      {message && <p className="text-[#4caf50] text-sm">{message}</p>}
 
       <button
         onClick={save}
         disabled={saving}
-        className="btn-primary"
-        style={{ alignSelf: "flex-start", padding: "6px 16px", fontSize: "0.875rem" }}
+        className="self-start px-4 py-1.5 text-sm rounded-md bg-accent text-white border-none font-semibold cursor-pointer transition-colors hover:bg-accent-hover disabled:opacity-50"
       >
         {saving ? "保存中…" : "保存修改"}
       </button>

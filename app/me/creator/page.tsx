@@ -14,10 +14,10 @@ export default async function CreatorCenterPage() {
   const videos = await getMyVideos(viewerUserId);
 
   return (
-    <div style={{ maxWidth: "800px", margin: "0 auto", padding: "1.25rem 1rem" }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem", gap: "0.75rem", flexWrap: "wrap" }}>
-        <h1 style={{ fontSize: "1.25rem", fontWeight: 700 }}>创作者中心</h1>
-        <Link href="/me" className="btn-secondary" style={{ padding: "8px 14px", fontSize: "0.8125rem" }}>
+    <div className="max-w-[800px] mx-auto px-4 py-5">
+      <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
+        <h1 className="text-xl font-bold">创作者中心</h1>
+        <Link href="/me" className="inline-flex items-center gap-1.5 rounded-md border border-border-light bg-transparent px-3.5 py-2 text-[0.8125rem] font-medium text-text-secondary transition-all hover:border-text-muted hover:text-text-primary cursor-pointer">
           返回个人中心
         </Link>
       </div>

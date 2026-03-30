@@ -22,63 +22,20 @@ export default async function Header() {
   }
 
   return (
-    <header
-      style={{
-        backgroundColor: "#000000",
-        borderBottom: "1px solid var(--border)",
-        position: "sticky",
-        top: 0,
-        zIndex: 50,
-      }}
-    >
-      <div
-        style={{
-          maxWidth: "1400px",
-          margin: "0 auto",
-          padding: "0 1rem",
-          height: "56px",
-          display: "flex",
-          alignItems: "center",
-          gap: "1.5rem",
-        }}
-      >
+    <header className="bg-black border-b border-border sticky top-0 z-50">
+      <div className="max-w-[1400px] mx-auto px-4 h-14 flex items-center gap-6">
         {/* Logo */}
-        <Link
-          href="/"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem",
-            flexShrink: 0,
-          }}
-        >
+        <Link href="/" className="flex items-center gap-2 shrink-0">
           <span
-            style={{
-              fontWeight: 900,
-              fontStyle: "italic",
-              fontSize: "1.375rem",
-              letterSpacing: "-1px",
-              background: "linear-gradient(90deg, #e91c78 0%, #ff6eb4 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-              lineHeight: 1,
-            }}
+            className="font-black italic text-[1.375rem] -tracking-[1px] leading-none bg-clip-text text-transparent"
+            style={{ backgroundImage: "linear-gradient(90deg, #e91c78 0%, #ff6eb4 100%)" }}
           >
             短视频
           </span>
         </Link>
 
         {/* Nav Links */}
-        <nav
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.25rem",
-            flexShrink: 0,
-          }}
-          className="hidden-mobile"
-        >
+        <nav className="hidden sm:flex items-center gap-1 shrink-0">
           <NavLink href="/">首页</NavLink>
           <NavLink href="/subscriptions">关注</NavLink>
           <NavLink href="/rankings">榜单</NavLink>
@@ -87,37 +44,27 @@ export default async function Header() {
         </nav>
 
         {/* Search */}
-        <div style={{ flex: 1, maxWidth: "400px" }}>
+        <div className="flex-1 max-w-[400px]">
           <SearchBar />
         </div>
 
         {/* Auth */}
-        <div
-          style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginLeft: "auto", flexShrink: 0 }}
-        >
+        <div className="flex items-center gap-3 ml-auto shrink-0">
           {viewerProfile ? (
             <>
               <Link
                 href="/me"
-                className="nav-link"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                  padding: "4px 8px",
-                  borderRadius: "6px",
-                  transition: "background 0.15s",
-                }}
+                className="flex items-center gap-2 px-2 py-1 rounded-md transition-colors hover:bg-bg-hover"
               >
                 <Image
                   src={normalizeAvatarUrl(viewerProfile.avatarUrl, viewerProfile.name, viewerProfile.username)}
                   alt={viewerProfile.name ?? "用户"}
                   width={24}
                   height={24}
-                  style={{ borderRadius: "50%", objectFit: "cover" }}
+                  className="rounded-full object-cover"
                   unoptimized
                 />
-                <span style={{ fontSize: "0.875rem", color: "var(--text-primary)", maxWidth: "120px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} className="hidden-mobile">
+                <span className="hidden sm:inline text-sm text-text-primary max-w-[120px] overflow-hidden text-ellipsis whitespace-nowrap">
                   {viewerProfile.name ?? viewerProfile.username ?? "我的账户"}
                 </span>
               </Link>
@@ -126,21 +73,13 @@ export default async function Header() {
             <>
               <Link
                 href="/login"
-                style={{
-                  fontSize: "0.875rem",
-                  color: "var(--text-secondary)",
-                  padding: "6px 14px",
-                  borderRadius: "6px",
-                  border: "1px solid var(--border-light)",
-                  transition: "all 0.15s",
-                }}
+                className="text-sm text-text-secondary px-3.5 py-1.5 rounded-md border border-border-light transition-all hover:border-text-muted hover:text-text-primary"
               >
                 登录
               </Link>
               <Link
                 href="/register"
-                className="btn-primary"
-                style={{ fontSize: "0.875rem", padding: "6px 14px" }}
+                className="inline-flex items-center gap-1.5 text-sm font-semibold px-3.5 py-1.5 rounded-md bg-accent text-white border-none cursor-pointer transition-colors hover:bg-accent-hover"
               >
                 注册
               </Link>
@@ -148,12 +87,6 @@ export default async function Header() {
           )}
         </div>
       </div>
-
-      <style>{`
-        @media (max-width: 640px) {
-          .hidden-mobile { display: none !important; }
-        }
-      `}</style>
     </header>
   );
 }
@@ -162,14 +95,7 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
   return (
     <Link
       href={href}
-      className="nav-link"
-      style={{
-        fontSize: "0.875rem",
-        color: "var(--text-secondary)",
-        padding: "6px 10px",
-        borderRadius: "6px",
-        whiteSpace: "nowrap",
-      }}
+      className="text-sm text-text-secondary px-2.5 py-1.5 rounded-md whitespace-nowrap transition-[color,background] duration-150 hover:text-accent hover:bg-bg-hover"
     >
       {children}
     </Link>

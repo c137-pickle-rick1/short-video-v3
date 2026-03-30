@@ -33,15 +33,15 @@ export default async function BookmarksPage({ searchParams }: { searchParams: Pr
   const totalPages = Math.ceil(total / PAGE_SIZE);
 
   return (
-    <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "1.25rem 1rem" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1.25rem" }}>
-        <Link href="/me" style={{ color: "var(--text-muted)", fontSize: "0.875rem" }}>个人中心</Link>
-        <span style={{ color: "var(--text-muted)" }}>›</span>
-        <h1 style={{ fontSize: "0.875rem", fontWeight: 600 }}>我的收藏</h1>
+    <div className="max-w-[1400px] mx-auto px-4 py-5">
+      <div className="flex items-center gap-2 mb-5">
+        <Link href="/me" className="text-text-muted text-sm">个人中心</Link>
+        <span className="text-text-muted">›</span>
+        <h1 className="text-sm font-semibold">我的收藏</h1>
       </div>
 
       {error && (
-        <div style={{ background: "#2d0a0a", border: "1px solid #5c1414", borderRadius: "8px", padding: "1rem", color: "#ff6b6b", fontSize: "0.875rem", marginBottom: "1rem" }}>
+        <div className="bg-[#2d0a0a] border border-[#5c1414] rounded-lg p-4 text-[#ff6b6b] text-sm mb-4">
           ⚠️ {error}
         </div>
       )}

@@ -55,20 +55,15 @@ export default function VideoDetailReactions({ videoId, initialLikes, initialLik
   };
 
   return (
-    <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: "center" }}>
+    <div className="flex gap-2 flex-wrap justify-center">
       <button
         onClick={toggleLike}
         disabled={likeLoading}
-        style={{
-          display: "flex", alignItems: "center", gap: "6px",
-          padding: "6px 14px",
-          background: liked ? "rgba(229,25,42,0.15)" : "var(--bg-card)",
-          border: `1px solid ${liked ? "var(--accent)" : "var(--border)"}`,
-          borderRadius: "7px",
-          color: liked ? "var(--accent)" : "var(--text-secondary)",
-          fontWeight: 600, fontSize: "0.8125rem",
-          cursor: likeLoading ? "wait" : "pointer",
-        }}
+        className={`flex items-center gap-1.5 py-1.5 px-3.5 rounded-[7px] font-semibold text-[0.8125rem] border ${
+          liked
+            ? "bg-[rgba(229,25,42,0.15)] border-accent text-accent"
+            : "bg-bg-card border-border text-text-secondary"
+        } ${likeLoading ? "cursor-wait" : "cursor-pointer"}`}
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill={liked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
@@ -80,16 +75,11 @@ export default function VideoDetailReactions({ videoId, initialLikes, initialLik
       <button
         onClick={toggleBookmark}
         disabled={bookmarkLoading}
-        style={{
-          display: "flex", alignItems: "center", gap: "6px",
-          padding: "6px 14px",
-          background: bookmarked ? "rgba(229,25,42,0.15)" : "var(--bg-card)",
-          border: `1px solid ${bookmarked ? "var(--accent)" : "var(--border)"}`,
-          borderRadius: "7px",
-          color: bookmarked ? "var(--accent)" : "var(--text-secondary)",
-          fontWeight: 600, fontSize: "0.8125rem",
-          cursor: bookmarkLoading ? "wait" : "pointer",
-        }}
+        className={`flex items-center gap-1.5 py-1.5 px-3.5 rounded-[7px] font-semibold text-[0.8125rem] border ${
+          bookmarked
+            ? "bg-[rgba(229,25,42,0.15)] border-accent text-accent"
+            : "bg-bg-card border-border text-text-secondary"
+        } ${bookmarkLoading ? "cursor-wait" : "cursor-pointer"}`}
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill={bookmarked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
           <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />

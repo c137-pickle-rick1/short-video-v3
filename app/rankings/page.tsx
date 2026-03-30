@@ -20,71 +20,61 @@ export default async function RankingsPage() {
   }
 
   return (
-    <div style={{ maxWidth: "900px", margin: "0 auto", padding: "1.25rem 1rem" }}>
-      <h1 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "1.25rem" }}>本周发布榜</h1>
+    <div className="max-w-[900px] mx-auto px-4 py-5">
+      <h1 className="text-xl font-bold mb-5">本周发布榜</h1>
 
       {error && (
-        <div style={{ background: "#2d0a0a", border: "1px solid #5c1414", borderRadius: "8px", padding: "1rem", color: "#ff6b6b", fontSize: "0.875rem" }}>
+        <div className="bg-[#2d0a0a] border border-[#5c1414] rounded-lg p-4 text-[#ff6b6b] text-sm">
           ⚠️ {error}
         </div>
       )}
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+      <div className="flex flex-col gap-2.5">
         {items.map((item, idx) => {
           return (
             <div
               key={item.userId}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                background: "var(--bg-card)",
-                border: "1px solid var(--border)",
-                borderRadius: "10px",
-                padding: "14px 16px",
-                gap: "14px",
-              }}
+              className="flex items-center bg-bg-card border border-border rounded-[10px] py-3.5 px-4 gap-3.5"
             >
               {/* Rank number */}
-              <div style={{
-                minWidth: "2rem",
-                textAlign: "center",
-                fontSize: idx < 3 ? "1.25rem" : "1rem",
-                fontWeight: 700,
-                color: idx === 0 ? "#ffd700" : idx === 1 ? "#c0c0c0" : idx === 2 ? "#cd7f32" : "var(--text-secondary)",
-              }}>
+              <div className={`min-w-[2rem] text-center font-bold ${
+                idx < 3 ? "text-xl" : "text-base"
+              } ${
+                idx === 0 ? "text-[#ffd700]" : idx === 1 ? "text-[#c0c0c0]" : idx === 2 ? "text-[#cd7f32]" : "text-text-secondary"
+              }`}>
                 {idx < 3 ? ["🥇","🥈","🥉"][idx] : `${idx + 1}`}
               </div>
 
               {/* Avatar */}
-              <Link href={item.profileUrl} style={{ flexShrink: 0 }}>
+              <Link href={item.profileUrl} className="shrink-0">
                 <Image
                   src={item.imageUrl}
                   alt={item.name}
                   width={46}
                   height={46}
-                  style={{ borderRadius: "50%", objectFit: "cover" }}
+                  className="rounded-full object-cover"
                   unoptimized
                 />
               </Link>
 
               {/* Info */}
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <Link href={item.profileUrl} style={{ fontWeight: 600, fontSize: "0.9375rem", color: "var(--text-primary)" }}>
+              <div className="flex-1 min-w-0">
+                <Link href={item.profileUrl} className="font-semibold text-[0.9375rem] text-text-primary">
                   {item.name}
                 </Link>
-                <div style={{ fontSize: "0.8125rem", color: "var(--text-muted)", marginTop: "2px" }}>
+                <div className="text-[0.8125rem] text-text-muted mt-0.5">
                   {item.handle}
                 </div>
               </div>
 
               {/* Stats */}
-              <div style={{ display: "flex", gap: "20px", fontSize: "0.8125rem", color: "var(--text-secondary)" }}>
-                <div style={{ textAlign: "center" }}>
-                  <div style={{ fontWeight: 600, color: "var(--text-primary)" }}>{item.totalVideos}</div>
+              <div className="flex gap-5 text-[0.8125rem] text-text-secondary">
+                <div className="text-center">
+                  <div className="font-semibold text-text-primary">{item.totalVideos}</div>
                   <div>视频</div>
                 </div>
-                <div style={{ textAlign: "center" }}>
-                  <div style={{ fontWeight: 600, color: "var(--text-primary)" }}>{item.publishedCount7d}</div>
+                <div className="text-center">
+                  <div className="font-semibold text-text-primary">{item.publishedCount7d}</div>
                   <div>本周</div>
                 </div>
               </div>
@@ -102,7 +92,7 @@ export default async function RankingsPage() {
         })}
 
         {items.length === 0 && !error && (
-          <div style={{ textAlign: "center", padding: "3rem", color: "var(--text-muted)" }}>暂无数据</div>
+          <div className="text-center p-12 text-text-muted">暂无数据</div>
         )}
       </div>
     </div>

@@ -9,15 +9,15 @@ export default async function CategoriesPage() {
   const groups = await getCategoryGroups();
 
   return (
-    <main className="categories-page">
+    <main className="max-w-[1400px] mx-auto px-4 pt-6 pb-12">
       {groups.length === 0 && (
-        <p className="empty-state">暂无分类</p>
+        <p className="text-text-secondary text-center py-12">暂无分类</p>
       )}
       {groups.map((group: CategoryGroup) =>
         group.items.length === 0 ? null : (
-          <section key={group.id} className="category-group">
-            <h2 className="category-group-title">{group.name}</h2>
-            <div className="category-grid">
+          <section key={group.id} className="mb-10">
+            <h2 className="text-lg font-bold text-text-secondary uppercase tracking-wider mb-4 pb-2 border-b-2 border-accent inline-block">{group.name}</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-2.5 lg:gap-4">
               {group.items.map((category) => (
                 <CategoryCard key={category.id} category={category} />
               ))}
@@ -25,112 +25,28 @@ export default async function CategoriesPage() {
           </section>
         )
       )}
-      <style>{`
-        .categories-page {
-          max-width: 1400px;
-          margin: 0 auto;
-          padding: 24px 16px 48px;
-        }
-        .empty-state {
-          color: var(--text-secondary);
-          text-align: center;
-          padding: 48px 0;
-        }
-        .category-group {
-          margin-bottom: 40px;
-        }
-        .category-group-title {
-          font-size: 1.1rem;
-          font-weight: 700;
-          color: var(--text-secondary);
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-          margin: 0 0 16px;
-          padding-bottom: 8px;
-          border-bottom: 2px solid var(--accent);
-          display: inline-block;
-        }
-        .category-grid {
-          display: grid;
-          grid-template-columns: repeat(5, 1fr);
-          gap: 16px;
-        }
-        @media (max-width: 1100px) {
-          .category-grid { grid-template-columns: repeat(4, 1fr); }
-        }
-        @media (max-width: 768px) {
-          .category-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        }
-        @media (max-width: 480px) {
-          .category-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-        }
-        .category-card {
-          position: relative;
-          aspect-ratio: 16 / 9;
-          border-radius: 8px;
-          overflow: hidden;
-          display: block;
-          background: #1a1a1a;
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .category-card:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 6px 24px rgba(233, 28, 120, 0.35);
-        }
-        .category-card img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          display: block;
-        }
-        .category-card-placeholder {
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(135deg, #1e1e2e 0%, #2a1a2e 100%);
-        }
-        .category-card-overlay {
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.15) 55%, transparent 100%);
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-end;
-          padding: 10px 12px;
-        }
-        .category-card-name {
-          font-size: 0.95rem;
-          font-weight: 700;
-          color: #fff;
-          line-height: 1.2;
-          margin-bottom: 4px;
-        }
-        .category-card-count {
-          font-size: 0.72rem;
-          color: rgba(255,255,255,0.65);
-        }
-      `}</style>
     </main>
   );
 }
 
 function CategoryCard({ category }: { category: Category }) {
   return (
-    <Link href={`/categories/${category.slug}`} className="category-card">
+    <Link href={`/categories/${category.slug}`} className="relative aspect-video rounded-lg overflow-hidden block bg-[#1a1a1a] transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-[0_6px_24px_rgba(233,28,120,0.35)]">
       {category.coverUrl ? (
         <Image
           src={category.coverUrl}
           alt={category.name}
           fill
           sizes="(max-width: 480px) 50vw, (max-width: 768px) 33vw, (max-width: 1100px) 25vw, 20vw"
-          style={{ objectFit: "cover" }}
+          className="object-cover"
           unoptimized
         />
       ) : (
-        <div className="category-card-placeholder" />
+        <div className="w-full h-full bg-gradient-to-br from-[#1e1e2e] to-[#2a1a2e]" />
       )}
-      <div className="category-card-overlay">
-        <div className="category-card-name">{category.name}</div>
-        <div className="category-card-count">{category.videoCount} 个视频</div>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent flex flex-col justify-end p-2.5 px-3">
+        <div className="text-[0.95rem] font-bold text-white leading-tight mb-1">{category.name}</div>
+        <div className="text-[0.72rem] text-white/65">{category.videoCount} 个视频</div>
       </div>
     </Link>
   );

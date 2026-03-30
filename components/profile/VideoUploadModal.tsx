@@ -89,47 +89,27 @@ export default function VideoUploadModal({ onClose, onSuccess }: Props) {
 
   return (
     <div
-      style={{
-        position: "fixed", inset: 0, zIndex: 100,
-        background: "rgba(0,0,0,0.7)",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        padding: "1rem",
-      }}
+      className="fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-4"
       onClick={(e) => { if (e.target === e.currentTarget && !uploading) onClose(); }}
     >
-      <div
-        style={{
-          background: "#1a1a1a",
-          border: "1px solid #2a2a2a",
-          borderRadius: "16px",
-          width: "100%",
-          maxWidth: "520px",
-          padding: "24px",
-        }}
-      >
+      <div className="bg-[#1a1a1a] border border-border rounded-2xl w-full max-w-[520px] p-6">
         {/* Header */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px" }}>
-          <h2 style={{ fontSize: "1.125rem", fontWeight: 700 }}>上传视频</h2>
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-lg font-bold">上传视频</h2>
           {!uploading && (
             <button
               onClick={onClose}
-              style={{ background: "none", border: "none", cursor: "pointer", color: "#999", padding: "4px" }}
+              className="bg-transparent border-none cursor-pointer text-text-secondary p-1"
             >
               <X size={20} />
             </button>
           )}
         </div>
 
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {/* File picker */}
           <div
-            style={{
-              border: "2px dashed #2a2a2a",
-              borderRadius: "12px",
-              padding: "20px",
-              textAlign: "center",
-              cursor: uploading ? "not-allowed" : "pointer",
-            }}
+            className={`border-2 border-dashed border-border rounded-xl p-5 text-center ${uploading ? "cursor-not-allowed" : "cursor-pointer"}`}
             onClick={() => !uploading && fileInputRef.current?.click()}
           >
             <input
@@ -138,22 +118,22 @@ export default function VideoUploadModal({ onClose, onSuccess }: Props) {
               accept="video/mp4,video/webm,video/quicktime,video/x-m4v,.mp4,.mov,.m4v,.webm"
               onChange={handleFileChange}
               disabled={uploading}
-              style={{ display: "none" }}
+              className="hidden"
             />
-            <VideoCamera size={32} color="#666" style={{ marginBottom: "8px" }} />
+            <VideoCamera size={32} color="#666" className="mb-2" />
             {selectedFile ? (
               <>
-                <p style={{ fontSize: "0.875rem", color: "#f0f0f0", fontWeight: 600 }}>
+                <p className="text-sm text-[#f0f0f0] font-semibold">
                   {selectedFile.name}
                 </p>
-                <p style={{ fontSize: "0.75rem", color: "#666", marginTop: "4px" }}>
+                <p className="text-xs text-[#666] mt-1">
                   {(selectedFile.size / 1024 / 1024).toFixed(1)} MB · 点击重新选择
                 </p>
               </>
             ) : (
               <>
-                <p style={{ fontSize: "0.875rem", color: "#999" }}>点击选择视频文件</p>
-                <p style={{ fontSize: "0.75rem", color: "#555", marginTop: "4px" }}>
+                <p className="text-sm text-text-secondary">点击选择视频文件</p>
+                <p className="text-xs text-text-muted mt-1">
                   支持 MP4、MOV、M4V、WEBM，最大 200MB
                 </p>
               </>
@@ -161,8 +141,8 @@ export default function VideoUploadModal({ onClose, onSuccess }: Props) {
           </div>
 
           {/* Title */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-            <label style={{ fontSize: "0.875rem", fontWeight: 600, color: "#ccc" }}>标题</label>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-semibold text-[#ccc]">标题</label>
             <input
               type="text"
               value={title}
@@ -170,19 +150,15 @@ export default function VideoUploadModal({ onClose, onSuccess }: Props) {
               disabled={uploading}
               placeholder="给这条视频起个醒目的标题"
               maxLength={120}
-              style={{
-                background: "#242424", border: "1px solid #333", borderRadius: "8px",
-                padding: "10px 14px", fontSize: "0.9375rem", color: "#f0f0f0",
-                outline: "none",
-              }}
+              className="bg-[#242424] border border-border-light rounded-lg px-3.5 py-2.5 text-[0.9375rem] text-[#f0f0f0] outline-none"
             />
           </div>
 
           {/* Tags */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <label style={{ fontSize: "0.875rem", fontWeight: 600, color: "#ccc" }}>标签</label>
-              <span style={{ fontSize: "0.75rem", color: "#555" }}>多个标签用逗号分隔</span>
+          <div className="flex flex-col gap-1.5">
+            <div className="flex justify-between">
+              <label className="text-sm font-semibold text-[#ccc]">标签</label>
+              <span className="text-xs text-text-muted">多个标签用逗号分隔</span>
             </div>
             <input
               type="text"
@@ -191,53 +167,39 @@ export default function VideoUploadModal({ onClose, onSuccess }: Props) {
               disabled={uploading}
               placeholder="例如：旅行, 探店, Vlog"
               maxLength={120}
-              style={{
-                background: "#242424", border: "1px solid #333", borderRadius: "8px",
-                padding: "10px 14px", fontSize: "0.9375rem", color: "#f0f0f0",
-                outline: "none",
-              }}
+              className="bg-[#242424] border border-border-light rounded-lg px-3.5 py-2.5 text-[0.9375rem] text-[#f0f0f0] outline-none"
             />
           </div>
 
           {/* Error */}
           {error && (
-            <p style={{
-              background: "rgba(229,25,42,0.1)", border: "1px solid rgba(229,25,42,0.3)",
-              borderRadius: "8px", padding: "10px 14px",
-              fontSize: "0.875rem", color: "#e5192a",
-            }}>
+            <p className="bg-[rgba(229,25,42,0.1)] border border-[rgba(229,25,42,0.3)] rounded-lg px-3.5 py-2.5 text-sm text-[#e5192a]">
               {error}
             </p>
           )}
 
           {/* Progress bar */}
           {uploading && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <div style={{ height: "6px", background: "#2a2a2a", borderRadius: "3px", overflow: "hidden" }}>
+            <div className="flex flex-col gap-1.5">
+              <div className="h-1.5 bg-border rounded-sm overflow-hidden">
                 <div
-                  style={{
-                    height: "100%", background: "#e5192a", borderRadius: "3px",
-                    width: `${progress}%`, transition: "width 0.3s ease",
-                  }}
+                  className="h-full bg-[#e5192a] rounded-sm transition-[width] duration-300 ease-out"
+                  style={{ width: `${progress}%` }}
                 />
               </div>
-              <p style={{ fontSize: "0.75rem", color: "#666", textAlign: "center" }}>
+              <p className="text-xs text-[#666] text-center">
                 {progress < 100 ? `上传中… ${progress}%` : "处理中…"}
               </p>
             </div>
           )}
 
           {/* Actions */}
-          <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
+          <div className="flex gap-2.5 justify-end">
             {!uploading && (
               <button
                 type="button"
                 onClick={onClose}
-                style={{
-                  padding: "10px 20px", borderRadius: "8px",
-                  border: "1px solid #333", background: "none",
-                  color: "#ccc", fontSize: "0.875rem", cursor: "pointer",
-                }}
+                className="px-5 py-2.5 rounded-lg border border-border-light bg-transparent text-[#ccc] text-sm cursor-pointer"
               >
                 取消
               </button>
@@ -245,26 +207,19 @@ export default function VideoUploadModal({ onClose, onSuccess }: Props) {
             <button
               type="submit"
               disabled={uploading || !selectedFile || !title.trim()}
-              style={{
-                padding: "10px 20px", borderRadius: "8px",
-                background: uploading || !selectedFile || !title.trim() ? "#2a2a2a" : "#e5192a",
-                color: uploading || !selectedFile || !title.trim() ? "#555" : "#fff",
-                border: "none", fontSize: "0.875rem", fontWeight: 600,
-                cursor: uploading || !selectedFile || !title.trim() ? "not-allowed" : "pointer",
-                display: "flex", alignItems: "center", gap: "6px",
-              }}
+              className={`px-5 py-2.5 rounded-lg border-none text-sm font-semibold flex items-center gap-1.5 ${
+                uploading || !selectedFile || !title.trim()
+                  ? "bg-border text-text-muted cursor-not-allowed"
+                  : "bg-[#e5192a] text-white cursor-pointer"
+              }`}
             >
               {uploading
-                ? <><SpinnerGap size={16} style={{ animation: "spin 1s linear infinite" }} /> 上传中</>
+                ? <><SpinnerGap size={16} className="animate-spin" /> 上传中</>
                 : <><UploadSimple size={16} /> 开始上传</>
               }
             </button>
           </div>
         </form>
-
-        <style>{`
-          @keyframes spin { to { transform: rotate(360deg); } }
-        `}</style>
       </div>
     </div>
   );
