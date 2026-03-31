@@ -75,8 +75,8 @@ export default function WatchHeatmap({ data }: Props) {
         </span>
       </div>
 
-      <div className="overflow-x-auto">
-        <table style={{ borderCollapse: "separate", borderSpacing: 3 }}>
+      <div className="overflow-x-auto scrollbar-hide">
+        <table style={{ borderCollapse: "separate", borderSpacing: 3, minWidth: 720 }}>
           <thead>
             <tr>
               <td style={{ width: 28 }} />
