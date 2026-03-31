@@ -6,11 +6,13 @@ import CommentsList from "@/components/video/CommentsList";
 import VideoCard from "@/components/video/VideoCard";
 import RecordView from "@/components/video/RecordView";
 import ProfileFollowButton from "@/components/profile/ProfileFollowButton";
+import EmptyState from "@/components/common/EmptyState";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { FilmStripIcon } from "@phosphor-icons/react/dist/ssr";
 import type { VideoFeedItem } from "@/lib/types";
 
 interface PageProps {
@@ -38,7 +40,6 @@ async function CommentsSection({
       videoId={videoId}
       initialComments={comments}
       viewerLoggedIn={viewerLoggedIn}
-      viewerUserId={viewerUserId}
       viewerName={viewerName}
       viewerImage={viewerImage}
     />
@@ -47,6 +48,16 @@ async function CommentsSection({
 
 async function RelatedVideosSection({ videoId }: { videoId: number }) {
   const relatedVideos = await getRelatedVideos(videoId, 8);
+  if (relatedVideos.length === 0) {
+    return (
+      <EmptyState
+        icon={<FilmStripIcon size={20} weight="regular" />}
+        title="暂无相关视频"
+        description="有新的相关内容后，这里会自动更新。"
+      />
+    );
+  }
+
   return (
     <div className="grid grid-cols-2 lg:grid-cols-1 gap-2.5">
       {relatedVideos.map((v: VideoFeedItem) => (

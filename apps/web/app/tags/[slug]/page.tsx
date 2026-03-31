@@ -41,13 +41,11 @@ export default async function TagDetailPage({
         title={<><span className="text-accent">#</span>{tagName}</>}
       />
 
-      {videos.length === 0 ? (
-        <p className="text-text-secondary text-center py-12">
-          暂无视频
-        </p>
-      ) : (
-        <VideoGrid videos={videos} />
-      )}
+      <VideoGrid
+        videos={videos}
+        emptyMessage="暂无标签视频"
+        emptyDescription="该标签关联到新视频后，这里会自动更新。"
+      />
 
       {totalPages > 1 && (
         <Pagination

@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import { SquaresFourIcon } from "@phosphor-icons/react/dist/ssr";
+import EmptyState from "@/components/common/EmptyState";
 import { getCategoryGroups } from "@/lib/server/queries/category";
 import type { Category, CategoryGroup } from "@/lib/types";
 
@@ -11,7 +13,11 @@ export default async function CategoriesPage() {
   return (
     <main className="max-w-[1400px] mx-auto px-4 pt-6 pb-12">
       {groups.length === 0 && (
-        <p className="text-text-secondary text-center py-12">暂无分类</p>
+        <EmptyState
+          icon={<SquaresFourIcon size={20} weight="regular" />}
+          title="暂无分类"
+          description="分类内容完善后，这里会显示可浏览的分类。"
+        />
       )}
       {groups.map((group: CategoryGroup) =>
         group.items.length === 0 ? null : (

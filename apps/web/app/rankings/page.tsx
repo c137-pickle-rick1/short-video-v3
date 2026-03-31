@@ -9,7 +9,9 @@ import { resolveViewerUserIdFromCookieToken } from "@/lib/server/auth";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import Image from "next/image";
+import { TrophyIcon } from "@phosphor-icons/react/dist/ssr";
 import RankFollowButton from "@/components/profile/RankFollowButton";
+import EmptyState from "@/components/common/EmptyState";
 
 const TABS: { key: RankingTab; label: string; group: "creator" | "video" }[] = [
   { key: "prolific", label: "高产创作者", group: "creator" },
@@ -176,7 +178,11 @@ export default async function RankingsPage({
             </div>
           ))}
           {creatorItems.length === 0 && !error && (
-            <div className="text-center p-12 text-text-muted">暂无数据</div>
+            <EmptyState
+              icon={<TrophyIcon size={20} weight="regular" />}
+              title="暂无榜单数据"
+              description="有新的统计数据后，这里会更新榜单内容。"
+            />
           )}
         </div>
       )}
@@ -226,7 +232,11 @@ export default async function RankingsPage({
             </Link>
           ))}
           {videoItems.length === 0 && !error && (
-            <div className="text-center p-12 text-text-muted">暂无数据</div>
+            <EmptyState
+              icon={<TrophyIcon size={20} weight="regular" />}
+              title="暂无榜单数据"
+              description="有新的统计数据后，这里会更新榜单内容。"
+            />
           )}
         </div>
       )}

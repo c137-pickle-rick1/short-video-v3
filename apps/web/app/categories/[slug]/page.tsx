@@ -37,13 +37,11 @@ export default async function CategoryDetailPage({
     <div className="max-w-[1400px] mx-auto p-4">
       <SortBar currentSort={sort} basePath={`/categories/${slug}`} title={categoryName} />
 
-      {videos.length === 0 ? (
-        <p className="text-text-secondary text-center py-12">
-          暂无视频
-        </p>
-      ) : (
-        <VideoGrid videos={videos} />
-      )}
+      <VideoGrid
+        videos={videos}
+        emptyMessage="暂无分类视频"
+        emptyDescription="该分类关联到新视频后，这里会自动更新。"
+      />
 
       {totalPages > 1 && (
         <Pagination

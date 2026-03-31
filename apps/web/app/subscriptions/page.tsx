@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import ProfileFollowButton from "@/components/profile/ProfileFollowButton";
 import EmptyState from "@/components/common/EmptyState";
+import { UserListIcon, UsersIcon } from "@phosphor-icons/react/dist/ssr";
 
 export default async function SubscriptionsPage() {
   const jar = await cookies();
@@ -37,9 +38,9 @@ export default async function SubscriptionsPage() {
       {isFollowingEmpty && !error && (
         <div className="mb-3.5">
           <EmptyState
-            icon="✨"
-            title="还没有关注"
-            description="先从推荐创作者开始。"
+            icon={<UserListIcon size={20} weight="regular" />}
+            title="暂无关注创作者"
+            description="关注创作者后，这里会优先显示他们的更新。"
           />
         </div>
       )}
@@ -96,9 +97,9 @@ export default async function SubscriptionsPage() {
 
       {displayCreators.length === 0 && !error && (
         <EmptyState
-          icon="👀"
-          title={isFollowingEmpty ? "暂无推荐" : "关注列表为空"}
-          description={isFollowingEmpty ? "稍后再来看看。" : "去发现页关注更多创作者。"}
+          icon={<UsersIcon size={20} weight="regular" />}
+          title={isFollowingEmpty ? "暂无推荐创作者" : "暂无关注创作者"}
+          description={isFollowingEmpty ? "有新的推荐创作者后，这里会自动更新。" : "关注创作者后，这里会优先显示他们的更新。"}
         />
       )}
     </div>

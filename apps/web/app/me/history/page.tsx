@@ -50,7 +50,11 @@ export default async function HistoryPage({ searchParams }: { searchParams: Prom
         </div>
       )}
 
-      <VideoGrid videos={videos} emptyMessage="暂无观看历史" />
+      <VideoGrid
+        videos={videos}
+        emptyMessage="暂无观看历史"
+        emptyDescription="观看视频后，这里会自动记录浏览历史。"
+      />
       {totalPages > 1 && <Pagination currentPage={page} totalPages={totalPages} basePath="/me/history" />}
     </div>
   );

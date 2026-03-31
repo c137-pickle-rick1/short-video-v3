@@ -1,3 +1,6 @@
+import { ChartBarIcon } from "@phosphor-icons/react/dist/ssr";
+import EmptyState from "@/components/common/EmptyState";
+
 interface Props {
   data: { date: string; count: number }[];
 }
@@ -75,65 +78,76 @@ export default function WatchHeatmap({ data }: Props) {
         </span>
       </div>
 
-      <div className="overflow-x-auto scrollbar-hide">
-        <table style={{ borderCollapse: "separate", borderSpacing: 3, minWidth: 720 }}>
-          <thead>
-            <tr>
-              <td style={{ width: 28 }} />
-              {monthSpans.map((span, i) => (
-                <td
-                  key={i}
-                  colSpan={span.colSpan}
-                  style={{ fontSize: 10, color: "#666", padding: 0, textAlign: "left" }}
-                >
-                  {span.colSpan >= 2 ? span.label : ""}
-                </td>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {Array.from({ length: 7 }, (_, dayIndex) => (
-              <tr key={dayIndex}>
-                <td style={{ fontSize: 9, lineHeight: `${CELL}px`, color: "#555", textAlign: "right", paddingRight: 4, width: 28 }}>
-                  {DAY_LABELS[dayIndex] ?? ""}
-                </td>
-                {weeks.map((week, wi) => {
-                  const cell = week[dayIndex];
-                  return cell ? (
+      {totalVideos === 0 ? (
+        <EmptyState
+          icon={<ChartBarIcon size={20} weight="regular" />}
+          title="暂无看片记录"
+          description="开始观看视频后，这里会展示过去一年的热度变化。"
+          framed={false}
+        />
+      ) : (
+        <>
+          <div className="overflow-x-auto scrollbar-hide">
+            <table style={{ borderCollapse: "separate", borderSpacing: 3, minWidth: 720 }}>
+              <thead>
+                <tr>
+                  <td style={{ width: 28 }} />
+                  {monthSpans.map((span, i) => (
                     <td
-                      key={wi}
-                      title={`${cell.iso}：${cell.count > 0 ? `看了 ${cell.count} 个视频` : "暂无记录"}`}
-                      style={{
-                        width: CELL,
-                        height: CELL,
-                        padding: 0,
-                        borderRadius: 2,
-                        backgroundColor: cellColor(cell.count),
-                        lineHeight: 0,
-                        fontSize: 0,
-                      }}
-                    />
-                  ) : (
-                    <td key={wi} style={{ width: CELL, height: CELL, padding: 0, lineHeight: 0, fontSize: 0 }} />
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                      key={i}
+                      colSpan={span.colSpan}
+                      style={{ fontSize: 10, color: "#666", padding: 0, textAlign: "left" }}
+                    >
+                      {span.colSpan >= 2 ? span.label : ""}
+                    </td>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {Array.from({ length: 7 }, (_, dayIndex) => (
+                  <tr key={dayIndex}>
+                    <td style={{ fontSize: 9, lineHeight: `${CELL}px`, color: "#555", textAlign: "right", paddingRight: 4, width: 28 }}>
+                      {DAY_LABELS[dayIndex] ?? ""}
+                    </td>
+                    {weeks.map((week, wi) => {
+                      const cell = week[dayIndex];
+                      return cell ? (
+                        <td
+                          key={wi}
+                          title={`${cell.iso}：${cell.count > 0 ? `看了 ${cell.count} 个视频` : "暂无记录"}`}
+                          style={{
+                            width: CELL,
+                            height: CELL,
+                            padding: 0,
+                            borderRadius: 2,
+                            backgroundColor: cellColor(cell.count),
+                            lineHeight: 0,
+                            fontSize: 0,
+                          }}
+                        />
+                      ) : (
+                        <td key={wi} style={{ width: CELL, height: CELL, padding: 0, lineHeight: 0, fontSize: 0 }} />
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-      {/* Legend */}
-      <div className="flex items-center gap-1.5 mt-3 justify-end">
-        <span className="text-[10px] text-text-muted">少</span>
-        {([0, 2, 5, 10, 15] as const).map((n) => (
-          <div
-            key={n}
-            style={{ width: CELL, height: CELL, borderRadius: 2, backgroundColor: cellColor(n) }}
-          />
-        ))}
-        <span className="text-[10px] text-text-muted">多</span>
-      </div>
+          {/* Legend */}
+          <div className="flex items-center gap-1.5 mt-3 justify-end">
+            <span className="text-[10px] text-text-muted">少</span>
+            {([0, 2, 5, 10, 15] as const).map((n) => (
+              <div
+                key={n}
+                style={{ width: CELL, height: CELL, borderRadius: 2, backgroundColor: cellColor(n) }}
+              />
+            ))}
+            <span className="text-[10px] text-text-muted">多</span>
+          </div>
+        </>
+      )}
     </div>
   );
 }

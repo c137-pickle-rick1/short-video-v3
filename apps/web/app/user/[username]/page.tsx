@@ -74,7 +74,11 @@ export default async function UserProfilePage({ params }: PageProps) {
 
       {/* Videos */}
       <h2 className="text-base font-bold mb-3.5">发布的视频</h2>
-      <VideoGrid videos={profile.videos} emptyMessage="该用户暂无公开视频" />
+      <VideoGrid
+        videos={profile.videos}
+        emptyMessage="暂无公开视频"
+        emptyDescription="该用户发布公开视频后，这里会显示作品列表。"
+      />
     </div>
   );
 }

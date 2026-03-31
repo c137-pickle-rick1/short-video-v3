@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { TagIcon } from "@phosphor-icons/react/dist/ssr";
+import EmptyState from "@/components/common/EmptyState";
 import { getTags } from "@/lib/server/queries/tag";
 import type { Tag } from "@/lib/types";
 
@@ -25,7 +27,11 @@ export default async function TagsPage() {
       )}
 
       {tags.length === 0 && !error && (
-        <p className="text-text-muted text-center p-12">暂无标签</p>
+        <EmptyState
+          icon={<TagIcon size={20} weight="regular" />}
+          title="暂无标签"
+          description="视频关联标签后，这里会显示可浏览的标签。"
+        />
       )}
 
       <div className="flex flex-wrap gap-2.5">

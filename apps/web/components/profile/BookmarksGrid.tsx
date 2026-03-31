@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { BookmarkSimple } from "@phosphor-icons/react";
+import EmptyState from "@/components/common/EmptyState";
 import type { VideoFeedItem } from "@/lib/types";
 
 export default function BookmarksGrid({ initialVideos }: { initialVideos: VideoFeedItem[] }) {
@@ -31,9 +33,11 @@ export default function BookmarksGrid({ initialVideos }: { initialVideos: VideoF
 
   if (videos.length === 0) {
     return (
-      <div className="text-center py-16 text-text-muted text-base">
-        暂无收藏
-      </div>
+      <EmptyState
+        icon={<BookmarkSimple size={20} weight="regular" />}
+        title="暂无收藏"
+        description="收藏视频后，这里会保留想回看的内容。"
+      />
     );
   }
 

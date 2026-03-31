@@ -2,6 +2,8 @@ import { getHomeFeedItems, getExploreFeedItems, normalizeExploreFeedSort, normal
 import VideoGrid from "@/components/video/VideoGrid";
 import Pagination from "@/components/layout/Pagination";
 import SortBar from "@/components/layout/SortBar";
+import EmptyState from "@/components/common/EmptyState";
+import { MagnifyingGlassIcon } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import type { VideoFeedItem } from "@/lib/types";
 
@@ -36,6 +38,7 @@ export default async function HomePage({
   }
 
   const totalPages = Math.ceil(total / PAGE_SIZE);
+  const showSearchEmptyState = Boolean(searchQuery) && total === 0 && !error;
 
   return (
     <div className="max-w-[1400px] mx-auto p-4">
@@ -68,7 +71,15 @@ export default async function HomePage({
       />
 
       {/* Video grid */}
-      <VideoGrid videos={videos} />
+      {showSearchEmptyState ? (
+        <EmptyState
+          icon={<MagnifyingGlassIcon size={20} weight="regular" />}
+          title="未找到相关内容"
+          description="换个关键词后，这里会显示匹配的搜索结果。"
+        />
+      ) : (
+        <VideoGrid videos={videos} />
+      )}
 
       {/* Pagination */}
       {totalPages > 1 && (

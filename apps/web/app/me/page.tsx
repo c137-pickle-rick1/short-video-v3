@@ -9,6 +9,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { BookmarkSimpleIcon, ClockCounterClockwiseIcon } from "@phosphor-icons/react/dist/ssr";
+import EmptyState from "@/components/common/EmptyState";
 
 export default async function MePage() {
   const jar = await cookies();
@@ -108,7 +110,12 @@ export default async function MePage() {
             ))}
           </div>
         ) : (
-          <p className="text-sm text-text-muted py-6 text-center">暂无观看记录</p>
+          <EmptyState
+            icon={<ClockCounterClockwiseIcon size={20} weight="regular" />}
+            title="暂无观看记录"
+            description="观看视频后，这里会自动记录浏览历史。"
+            framed={false}
+          />
         )}
       </div>
 
@@ -131,7 +138,12 @@ export default async function MePage() {
             ))}
           </div>
         ) : (
-          <p className="text-sm text-text-muted py-6 text-center">暂无收藏</p>
+          <EmptyState
+            icon={<BookmarkSimpleIcon size={20} weight="regular" />}
+            title="暂无收藏"
+            description="收藏视频后，这里会保留想回看的内容。"
+            framed={false}
+          />
         )}
       </div>
 

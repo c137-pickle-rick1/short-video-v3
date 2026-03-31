@@ -4,13 +4,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { ChatText } from "@phosphor-icons/react";
+import EmptyState from "@/components/common/EmptyState";
 import type { CommentItem } from "@/lib/types";
 
 interface Props {
   videoId: string;
   initialComments: CommentItem[];
   viewerLoggedIn: boolean;
-  viewerUserId?: number | null;
   viewerName?: string | null;
   viewerImage?: string | null;
 }
@@ -198,7 +199,7 @@ function CommentRow({ comment, videoId, onDelete, onReply, viewerLoggedIn, viewe
   );
 }
 
-export default function CommentsList({ videoId, initialComments, viewerLoggedIn, viewerUserId, viewerName, viewerImage }: Props) {
+export default function CommentsList({ videoId, initialComments, viewerLoggedIn, viewerName, viewerImage }: Props) {
   const [comments, setComments] = useState<CommentItem[]>(initialComments);
   const [body, setBody] = useState("");
   const [posting, setPosting] = useState(false);
@@ -299,7 +300,12 @@ export default function CommentsList({ videoId, initialComments, viewerLoggedIn,
 
       {/* Comment list */}
       {comments.length === 0 ? (
-        <p className="text-text-muted text-sm text-center py-8">暂无评论，来第一个留言吧</p>
+        <EmptyState
+          icon={<ChatText size={20} weight="regular" />}
+          title="暂无评论"
+          description="发表第一条评论后，这里会显示互动内容。"
+          framed={false}
+        />
       ) : (
         comments.map((comment, idx) => (
           <div key={comment.id} className={`pb-3 ${idx < comments.length - 1 ? "mb-1" : ""}`}>

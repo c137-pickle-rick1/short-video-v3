@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { UploadSimple, VideoCamera, Clock, CheckCircle, Warning, ArrowClockwise } from "@phosphor-icons/react";
+import EmptyState from "@/components/common/EmptyState";
 import VideoUploadModal from "./VideoUploadModal";
 
 interface UploadedVideo {
@@ -99,6 +100,30 @@ export default function CreatorCenterTabs({ initialVideos }: Props) {
     return videos.filter((v) => inTab(v.status, activeTab));
   }, [videos, activeTab]);
 
+  const emptyState = activeTab === "published"
+    ? {
+        icon: <VideoCamera size={20} weight="regular" />,
+        title: "暂无已发布视频",
+        description: "视频发布成功后，这里会显示作品列表。",
+      }
+    : activeTab === "reviewing"
+      ? {
+          icon: <Clock size={20} weight="regular" />,
+          title: "暂无审核中视频",
+          description: "视频进入审核流程后，这里会显示处理状态。",
+        }
+      : activeTab === "uploading"
+        ? {
+            icon: <UploadSimple size={20} weight="regular" />,
+            title: "暂无上传任务",
+            description: "开始上传后，这里会显示上传与处理进度。",
+          }
+        : {
+            icon: <Warning size={20} weight="regular" />,
+            title: "暂无已下架视频",
+            description: "下架或隐藏的视频会保留在这里。",
+          };
+
   return (
     <div className="bg-bg-card border border-border rounded-xl p-6">
       <div className="flex items-center justify-between gap-2.5 flex-wrap mb-4">
@@ -129,10 +154,12 @@ export default function CreatorCenterTabs({ initialVideos }: Props) {
       </div>
 
       {filteredVideos.length === 0 ? (
-        <div className="border-2 border-dashed border-border rounded-xl py-8 px-5 text-center">
-          <VideoCamera size={36} color="#444" className="mb-2.5" />
-          <p className="text-[0.9375rem] text-[#666]">当前分类下还没有视频</p>
-        </div>
+        <EmptyState
+          icon={emptyState.icon}
+          title={emptyState.title}
+          description={emptyState.description}
+          framed={false}
+        />
       ) : (
         <div className="flex flex-col gap-2.5">
           {filteredVideos.map((video) => (
