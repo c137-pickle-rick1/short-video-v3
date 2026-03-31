@@ -98,7 +98,7 @@ export default function ProfileEditorForm({ name, bio, username, email, avatarUr
           type="text"
           value={username ?? ""}
           disabled
-          className="w-full bg-bg-secondary border border-border rounded-lg px-3 py-[9px] text-text-muted text-sm cursor-not-allowed box-border"
+          className="w-full bg-bg-secondary border border-border rounded-lg px-3 py-[9px] text-text-muted text-sm cursor-not-allowed box-border opacity-50"
         />
       </div>
 
@@ -110,7 +110,7 @@ export default function ProfileEditorForm({ name, bio, username, email, avatarUr
           type="email"
           value={email ?? ""}
           disabled
-          className="w-full bg-bg-secondary border border-border rounded-lg px-3 py-[9px] text-text-muted text-sm cursor-not-allowed box-border"
+          className="w-full bg-bg-secondary border border-border rounded-lg px-3 py-[9px] text-text-muted text-sm cursor-not-allowed box-border opacity-50"
         />
       </div>
 

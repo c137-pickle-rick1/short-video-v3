@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import type { VideoFeedItem } from "@/lib/types";
 
 interface VideoCardProps {
@@ -9,6 +12,7 @@ interface VideoCardProps {
 }
 
 export default function VideoCard({ video, showAuthor = true, eagerPoster = false }: VideoCardProps) {
+  const router = useRouter();
   return (
     <Link
       href={video.detailUrl}
@@ -68,7 +72,16 @@ export default function VideoCard({ video, showAuthor = true, eagerPoster = fals
         </p>
 
         {showAuthor && (
-          <div className="flex items-center gap-1.5">
+          <div
+            className="flex items-center gap-1.5"
+            onClick={(e) => {
+              if (video.author.profileUrl && video.author.profileUrl !== "/") {
+                e.preventDefault();
+                e.stopPropagation();
+                router.push(video.author.profileUrl);
+              }
+            }}
+          >
             <Image
               src={video.author.imageUrl}
               alt={video.author.name}
